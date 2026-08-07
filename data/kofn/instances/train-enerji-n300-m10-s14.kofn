@@ -1,0 +1,16 @@
+# uretec: problems/kofn/generate.py  (n=300, m=10, seed=14, profil=enerji)
+NAME gen-enerji-n300-m10-s14
+M 10
+N 300
+K 4065
+BUDGET 2118
+TYPE 1 16 9 0.89
+TYPE 2 23 10 0.96
+TYPE 3 19 6 0.81
+TYPE 4 22 11 0.82
+TYPE 5 21 12 0.84
+TYPE 6 19 10 0.8
+TYPE 7 20 9 0.93
+TYPE 8 25 9 0.89
+TYPE 9 23 9 0.9
+TYPE 10 15 5 0.89

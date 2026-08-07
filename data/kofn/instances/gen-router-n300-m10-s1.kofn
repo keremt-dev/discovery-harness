@@ -1,0 +1,16 @@
+# uretec: problems/kofn/generate.py  (n=300, m=10, seed=1, profil=router)
+NAME gen-router-n300-m10-s1
+M 10
+N 300
+K 807
+BUDGET 674
+TYPE 1 2 2 0.95
+TYPE 2 1 1 0.92
+TYPE 3 4 4 0.94
+TYPE 4 2 2 0.91
+TYPE 5 4 5 0.94
+TYPE 6 1 1 0.96
+TYPE 7 2 2 0.95
+TYPE 8 3 2 0.9
+TYPE 9 5 6 0.9
+TYPE 10 2 2 0.99

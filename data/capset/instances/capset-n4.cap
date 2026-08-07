@@ -1,0 +1,4 @@
+# Cap set instance: F_3^4 (AG(4,3))
+# Amaç: 3-AP'siz (cap) en buyuk S kumesi; SENSE=max.
+# Cozum formati: '#' yorum + her satir 4 adet bitisik {0,1,2}.
+dimension 4

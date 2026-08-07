@@ -1,0 +1,10 @@
+n,value,status,source
+1,2,kanitli,trivial
+2,4,kanitli,trivial
+3,9,kanitli,klasik
+4,20,kanitli,Pellegrino 1971
+5,45,kanitli,Edel-Ferret-Landjev-Storme 2002
+6,112,kanitli,Potechin 2008
+7,236,alt sinir (acik),Calderbank-Fishburn / Edel
+8,512,alt sinir (acik),FunSearch / Nature 2024
+9,1082,alt sinir (acik),Edel urun-konstr. / FunSearch teyidi

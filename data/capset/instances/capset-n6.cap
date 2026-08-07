@@ -1,0 +1,4 @@
+# Cap set instance: F_3^6 (AG(6,3))
+# Amaç: 3-AP'siz (cap) en buyuk S kumesi; SENSE=max.
+# Cozum formati: '#' yorum + her satir 6 adet bitisik {0,1,2}.
+dimension 6

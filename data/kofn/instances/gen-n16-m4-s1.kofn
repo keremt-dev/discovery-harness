@@ -1,0 +1,10 @@
+# uretec: problems/kofn/generate.py  (n=16, m=4, seed=1)
+NAME gen-n16-m4-s1
+M 4
+N 16
+K 56
+BUDGET 51
+TYPE 1 3 4 0.93
+TYPE 2 2 2 0.89
+TYPE 3 8 7 0.92
+TYPE 4 4 2 0.86

@@ -1,0 +1,11 @@
+# uretec: problems/kofn/generate.py  (n=25, m=5, seed=3, profil=sert)
+NAME gen-sert-n25-m5-s3
+M 5
+N 25
+K 110
+BUDGET 223
+TYPE 1 4 6 0.93
+TYPE 2 10 30 0.92
+TYPE 3 10 31 0.85
+TYPE 4 5 9 0.93
+TYPE 5 12 43 0.92

@@ -1,0 +1,95 @@
+# OpenEvolve konfigürasyonu — P1 (kofn) keşif döngüsü (Faz E)
+# Çalıştırma: evolve/run.ps1 (API key'i env'e koyar, openevolve-run'ı başlatır)
+# Döngü ayarları cvrp-discovery faz3/config.yaml'dan devralındı (§5 dersleri).
+
+max_iterations: 2000
+checkpoint_interval: 25
+log_level: INFO
+random_seed: 42
+diff_based_evolution: false   # OPUS KARTI (2026-08-05, docs/faz-e-gradyan.md):
+                              # checkpoint_75'ten Opus 5 + full-rewrite —
+                              # ~65 iterasyonluk 0.7228 platosunu kırma dilimi.
+                              # Diff modu GLM'de %64 kayıpla elendi (Dilim 2
+                              # ölçümü); plato yapısal mutasyon istiyor.
+max_code_length: 30000
+
+llm:
+  api_base: "http://localhost:8317/v1"   # cli-proxy-api (Claude OAuth) — OPUS KARTI dilimi
+  # GLM'e geri dönüş: api_base 8318 + model glm-5 + run.ps1 key kaynağı config.glm.yaml
+  api_key: "${OPENAI_API_KEY}"           # run.ps1 dolduruyor; repoya yazılmaz
+  models:
+    - name: "claude-opus-5"
+      weight: 1.0
+  temperature: 0.8
+  max_tokens: 20000
+  timeout: 600                # tam-dosya üretimi 3-10 dk; 180 sn retry fırtınası
+  retries: 3
+
+prompt:
+  system_message: |
+    You are evolving `solver.py`, a single-file Python solver for the
+    multi-type weighted k-out-of-n:G reliability design problem
+    (reliability maximization under a budget; Ozkut & Tutuncu 2025,
+    C&IE 210:111513, problem 4.3.2).
+
+    Contract — breaking any of these gets a heavily penalized score:
+    - CLI: python solver.py <instance.kofn> <output.txt>
+    - Input: line-based text; '#' starts a comment. Headers:
+      NAME <str>, M <int>, N <int>, K <number>, BUDGET <number>, then
+      exactly M lines "TYPE <idx 1..M> <weight> <cost> <reliability>".
+      Semantics: you buy n_j units of each type j; every unit of type j
+      works independently with probability p_j; the SYSTEM works iff the
+      total weight of working units is >= K.
+    - Output: one line with exactly M non-negative integers "n_1 ... n_M"
+      (the allocation). You may also write a line "R <float>" with your
+      own reliability estimate — it is IGNORED for scoring (the evaluator
+      recomputes R exactly with rational arithmetic) but logged as an
+      honesty sensor.
+    - Feasibility: sum(n_j) == N and sum(c_j * n_j) <= BUDGET. Infeasible
+      or unparseable output scores far below any feasible allocation, so
+      protect feasibility first.
+    - Determinism: same input must produce same output (fixed seeds only).
+    - Resources: single process, ~55 seconds wall clock, CPU only. Python
+      stdlib and numpy are available. No network, no threads needed, no
+      file access other than the two argv paths.
+
+    Goal: MAXIMIZE system reliability R = P(total working weight >= K).
+    R for a candidate allocation can be computed exactly-in-float via
+    convolution of per-unit weight distributions (dynamic programming
+    over total weight) — much faster than enumerating outcomes.
+    Promising directions: smarter construction than cost/benefit greedy,
+    multi-unit exchange local search (single-unit swaps often cannot
+    cross the K threshold — a real plateau), targeted enumeration over
+    promising type subsets, dominance pruning (never prefer a type that
+    is worse in weight, cost AND reliability), and an anytime time-budget
+    loop that stops safely before the 55 s limit.
+
+    SCALE REGIME (fitness set): instances range from N=20 to N=500
+    positions with up to M=12 types, and the score is the MEAN over all
+    instances in the set. Your solver must both find optima on small
+    instances AND scale gracefully to N=500 within the per-instance time
+    budget. Beware: construction heuristics tuned on small N can fail
+    badly at large N (e.g. overspending budget on heavy types early);
+    make construction robust to N, and size local-search neighborhoods
+    by remaining time, not by fixed counts.
+  num_top_programs: 3
+  num_diverse_programs: 2
+  include_artifacts: true      # stderr + violation özeti LLM'e geri döner
+
+database:
+  population_size: 200
+  archive_size: 50
+  num_islands: 4
+  elite_selection_ratio: 0.1
+  exploration_ratio: 0.2
+  exploitation_ratio: 0.7
+
+evaluator:
+  timeout: 240                 # 3 instance x 55 sn solver limiti + tampon
+                               # (çoklu-instance fitness; büyük-n dilimiyle
+                               # tam-aritmetik doğrulama ~3 sn/instance da
+                               # eklendi, 2026-08-05)
+  cascade_evaluation: false
+  parallel_evaluations: 2
+  memory_limit_mb: 2048
+  enable_artifacts: true

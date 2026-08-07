@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Agent/session artifacts
+.zcode/
+
+# Run outputs (large, machine-specific)
+runs/
+
+# Outreach drafts / correspondence with named third parties (personal)
+outreach/
+docs/ozkut-eposta-bilgi-notu.md
+
+# Copyrighted papers / downloaded sources (see data/*/reference/README.md for provenance)
+*.pdf
+data/*/reference/sources/

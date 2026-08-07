@@ -1,0 +1,11 @@
+# AG(3,3) optimal cap, |S|=9 (a(3)=9, klasik)
+# Bagimsiz uretim: random-restart greedy + extend
+001
+020
+021
+110
+111
+121
+210
+212
+220
