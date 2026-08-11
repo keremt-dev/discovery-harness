@@ -630,6 +630,18 @@ edilen risk; Docker'lı koşuma taşınabilir. Raporda not edilir.
       ya da cap320 (0.5176/1016, planın harfiyen hali). Koşu sonrası:
       plan Görev 6 Step 2-3 (analiz; cost<620 ise Görev 8 rekor
       prosedürü, değilse Görev 7 thinking-açık Opus kartı kararı).
+      **25-iter dilim SONUÇ (2026-08-11, kullanıcı kararıyla 300 yerine):**
+      duman en iyisinden (0.5423/978), runs\evolve\covering-v32-iter25.
+      SIFIR yeni en iyi (plato 0.5423/977 — 2-seed eval bir önceki 978'i
+      977 olarak yeniden üretti, gürültü tabanı ~1 blok); **12/25 çağrı
+      zayi (%48)**: 9 kod-boyu aşımı (35.4-38k > 35k — duman genomu
+      29.5k'ya büyümüştü, additive diff'ler tavana çarpıyor; dilim-6
+      dersinin tekrarı) + 3 diff kaybı (%12, GLM tarihçesiyle tutarlı).
+      Ansambl karışımı öngörüyle birebir: 13 Opus / 12 GLM (kısa-koşu
+      Opus-ağır önek). Checkpoint: covering-v32-iter25\checkpoints\
+      checkpoint_25 (14 program). Sonraki dilim için öneri: max_code_
+      length 35k→45k + system_message'a "dosyayı büyütme, ölü kodu buda"
+      telkini; checkpoint_25'ten devam (popülasyon çeşitliliği korunur).
 - [ ] **Faz G — P3 (HFFVRP-B).** cvrp-discovery evaluator'ünü KOPYALA,
       heterojen filo (tip başına kapasite + sabit maliyet) ve backhaul
       öncelik kısıtını ekle. ⚠ **Yuvarlama sözleşmesi DOĞRULANACAK**:
