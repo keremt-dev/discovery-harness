@@ -31,7 +31,8 @@ class RunResult:
     timed_out: bool
 
 
-def run_candidate(program_path, instance_path, timeout_s) -> RunResult:
+def run_candidate(program_path, instance_path, timeout_s,
+                  extra_args=None) -> RunResult:
     program = Path(program_path).resolve()
     t0 = time.perf_counter()
     with tempfile.TemporaryDirectory(prefix="discovery-run-") as tmpdir:
@@ -42,7 +43,7 @@ def run_candidate(program_path, instance_path, timeout_s) -> RunResult:
         try:
             proc = subprocess.run(
                 [sys.executable, str(program), str(instance_path),
-                 str(out_path)],
+                 str(out_path)] + [str(a) for a in (extra_args or [])],
                 capture_output=True, text=True, timeout=timeout_s,
                 cwd=tmpdir,
             )

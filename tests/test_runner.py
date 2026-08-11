@@ -69,3 +69,15 @@ class TestRunCandidate:
         """)
         rr = run_candidate(prog, "ozel-instance.kofn", timeout_s=10)
         assert "ozel-instance.kofn" in rr.solution_text
+
+    def test_extra_args_passed_to_candidate(self, tmp_path):
+        # Cok-seed degerlendirme (2026-08-11 plani): adaptor "--seed N"
+        # gibi ek argumanlari argv[3:] olarak iletebilmeli.
+        prog = write_program(tmp_path, """\
+            import sys
+            with open(sys.argv[2], "w") as f:
+                f.write(" ".join(sys.argv[3:]))
+        """)
+        rr = run_candidate(prog, "instance-yolu", timeout_s=15,
+                           extra_args=["--seed", "7"])
+        assert rr.solution_text == "--seed 7"
