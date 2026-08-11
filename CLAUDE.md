@@ -584,6 +584,33 @@ edilen risk; Docker'lı koşuma taşınabilir. Raporda not edilir.
       kaynak-doğrulandı (config.py `_resolve_env_var`, dacite
       `__post_init__`; env yoksa fail-fast). Testler: 280 → 283
       (test_extra_args, test_mean_over_seeds, test_no_env_single_run).
+      **Başlangıç genomu bulgusu:** gen-200 artefaktı iç bütçeyi 50 sn'ye
+      kırpıyor (`min(budget,50)`); 300 sn ölçümü için `_cap320` kopyası
+      açıldı (orijinale dokunulmadı). LLM'siz 2-seed taban: kırpmalı
+      0.5184/cost 1013, cap320 (600 sn fiili) 0.5176/cost 1016 — 6x süre
+      kaliteye DÖNÜŞMÜYOR (duvar-saati-oranlı fazlar ölçeklenmiyor;
+      maratonun varlık gerekçesi doğrulandı).
+      **Hijyen tamiri:** duman kapısı 3 test kırdı — shell'deki
+      `DISCOVERY_EVAL_SEEDS` pytest'e sızıp artifact anahtarlarını
+      `seed0:` önekiyle değiştiriyor. Çift katman: run.ps1 kapı temizliği
+      listesine EVAL_SEEDS eklendi + `tests/conftest.py` autouse fixture
+      (suit dış env'den hermetik). Env-set'li regresyon senaryosu yeşil.
+      **Duman testi YEŞİL (2026-08-11, 5 iter, 32 dk):** 5/5 geçerli kod,
+      SIFIR diff kaybı; en iyi 0.5181 → **0.5423**, cost **978** (v32
+      tüm-zaman en iyisi; önceki 1016). feasible hep 1.0, solver_s ~600
+      (bütçe tam kullanılıyor). İterasyon duvarı 661-743 sn, 4 paralel
+      örtüşmeyle efektif ~4.4 dk/iter.
+      **Ansambl seed BULGUSU (önemli):** controller random_seed 42'den
+      md5 ile llm_seed türetip TÜM model config'lerine yazıyor; her
+      worker ensemble'ı AYNI seed'le kurup aynı çekiliş dizisini izliyor
+      (`[1,1,0,1,0,0,0,1,...]`, 0=glm 1=opus). Duman'ın 5 çağrısının 5'i
+      de bu yüzden Opus'a gitti (4 worker ilk çekiliş + bir ikinci) —
+      proxy loglarıyla doğrulandı (8317: 5 POST, 8318: 0). 75 çekilişlik
+      önekte Opus %21.3 → 300 iterlik koşuda karışım hedefe oturur; kısa
+      koşularda Opus-ağır önek beklenir (kota planına dahil et). GLM
+      bacağı worker-birebir OpenAILLM ile canlı test edildi (8318, 'OK',
+      content dolu). Duman en iyisi: `evolve/artifacts/
+      best_v32_smoke_20260811.py` (gece koşusu başlangıç adayı).
 - [ ] **Faz G — P3 (HFFVRP-B).** cvrp-discovery evaluator'ünü KOPYALA,
       heterojen filo (tip başına kapasite + sabit maliyet) ve backhaul
       öncelik kısıtını ekle. ⚠ **Yuvarlama sözleşmesi DOĞRULANACAK**:
