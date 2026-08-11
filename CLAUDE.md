@@ -642,6 +642,15 @@ edilen risk; Docker'lı koşuma taşınabilir. Raporda not edilir.
       checkpoint_25 (14 program). Sonraki dilim için öneri: max_code_
       length 35k→45k + system_message'a "dosyayı büyütme, ölü kodu buda"
       telkini; checkpoint_25'ten devam (popülasyon çeşitliliği korunur).
+      **Dilim-2 SONUÇ (2026-08-11, +25 iter, 45k + budama telkini,
+      checkpoint_25→50):** düzeltmeler DOĞRULANDI — zayiat %48 → **%8**
+      (0 kod-boyu aşımı, 2 diff kaybı). AMA yine SIFIR yeni en iyi:
+      plato 0.5423/977 artık enstrüman artefaktı değil, gerçek (50 iterde
+      23 geçerli çocuk, hepsi 0.51-0.54 bandında). v28 emsali: bu noktada
+      GLM-ağır diff evrimi platoya girmişti ve kırılma Opus full-rewrite
+      "plato kartı" dilimiyle gelmişti (dilim-3: +25 iter, 0.6798→0.7017,
+      yapısal sıçrama). Checkpoint: covering-v32-iter25\checkpoints\
+      checkpoint_50.
 - [ ] **Faz G — P3 (HFFVRP-B).** cvrp-discovery evaluator'ünü KOPYALA,
       heterojen filo (tip başına kapasite + sabit maliyet) ve backhaul
       öncelik kısıtını ekle. ⚠ **Yuvarlama sözleşmesi DOĞRULANACAK**:
