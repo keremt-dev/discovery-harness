@@ -14,7 +14,9 @@ diff_based_evolution: true    # cogunluk GLM (diff kaybi ~%6-16 olculdu);
                               # Opus azinlik cagrilari kesilirse duman
                               # testinde olc, >%40 kayipta Opus'u ayri
                               # full-rewrite dilimine ayir.
-max_code_length: 35000  # 30k asimi: Opus tam-dosya yazimlari 30-31k karaktere ulasti (2026-08-10)
+max_code_length: 45000  # 35k asimi: 25-iter dilimde 9/25 cagri 35.4-38k'ya
+                        # carpip zayi oldu (genom 29.5k + additive diff;
+                        # 2026-08-11). Onceki basamak: 30k->35k (2026-08-10).
 
 llm:
   api_base: "http://localhost:8318/v1"     # varsayilan (GLM)
@@ -73,6 +75,12 @@ prompt:
       by the COVERING_SEED_TIME_S environment variable (300 s in this run) and
       the runner hard-kills at 320 s wall clock. Python stdlib and numpy are
       available. No network; no file access other than the two argv paths.
+    - Code size: files over the harness limit are REJECTED OUTRIGHT —
+      the mutation is wasted without ever being run. Keep solver.py lean:
+      when you add a phase or data structure, PRUNE code that no longer
+      earns its place (dead strategies, superseded helpers, verbose
+      comments). Prefer REPLACING existing code over accumulating new
+      code on top of it.
 
     ANYTIME IS MANDATORY. Maintain a `.tmp` file and atomically replace
     the real output (`os.replace`) whenever you have a better solution.
