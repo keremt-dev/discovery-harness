@@ -569,6 +569,21 @@ edilen risk; Docker'lı koşuma taşınabilir. Raporda not edilir.
       Görev görev, kodlu, TDD'li — superpowers:executing-plans ya da
       subagent-driven-development ile uygulanır. Plana başlamadan önce
       bu Faz P5 bölümünü oku.
+      **V32 maraton hazırlığı (2026-08-11, dal: faz-p5-v32-maraton):**
+      plan Görev 1-4 TDD ile tamam. (1) `harness/runner.py`
+      `run_candidate(..., extra_args=[...])` — aday argv[3:] ile ek
+      arguman alır; (2) `harness/evolve_evaluator.py` `DISCOVERY_EVAL_
+      SEEDS="0,1"` → seed başına `--seed N` koşusu, combined_score =
+      seed ORTALAMASI, cost = en iyi koşu, feasible = min (56-piyango
+      tamiri; boş env = eski davranış, arg'sız tek koşu); (3) `run.ps1`
+      `OPENAI_API_KEY_OPUS` (8317 config.yaml'dan, ansambl için);
+      (4) `evolve/config.covering.v32.yaml` — GLM 0.8 (8318) + Opus 0.2
+      (8317) ansamblı, diff true, 300 sn bütçe metinleri, iş-sayaçlı
+      determinizm maddesi, evaluator timeout 1400 / parallel 4.
+      OpenEvolve 0.3.2 per-model api_base/api_key + `${VAR}` çözümü
+      kaynak-doğrulandı (config.py `_resolve_env_var`, dacite
+      `__post_init__`; env yoksa fail-fast). Testler: 280 → 283
+      (test_extra_args, test_mean_over_seeds, test_no_env_single_run).
 - [ ] **Faz G — P3 (HFFVRP-B).** cvrp-discovery evaluator'ünü KOPYALA,
       heterojen filo (tip başına kapasite + sabit maliyet) ve backhaul
       öncelik kısıtını ekle. ⚠ **Yuvarlama sözleşmesi DOĞRULANACAK**:
