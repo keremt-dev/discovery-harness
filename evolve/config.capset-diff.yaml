@@ -1,21 +1,14 @@
-# OpenEvolve konfigürasyonu — P4 (capset) keşif döngüsü (Faz P4.4)
-# Çalıştırma: evolve/run.ps1 -GeceKosusuBitti -ConfigPath evolve\config.capset.yaml
-#   -Problem capset -Instance "data\capset\instances\capset-n7.cap;...n8;...n4"
-# GLM Coding Plan Lite (z.ai) — Claude kotası korunuyor (8317/Opus'a dokunma).
-# diff_based_evolution: false — GLM'de diff %64 kayıpla elendi (config.yaml notu).
-# system_message: problems/capset/prompt.md içeriği (rekor/hedef YOK — §0.5).
+# OpenEvolve konfigürasyonu — P4 (capset) DIFF DENEMESİ (2026-08-07)
+# config.capset.yaml kopyası + diff_based_evolution: true.
+# DENEME: thinking disabled sonrasi diff modu tekrar deniyor. config.yaml notu:
+# diff GLM'de thinking enabled/high iken %64 kayıpla elenmisti; thinking
+# disabled sonrasi content dolu geliyor, diff umutlu. 50 iter deneyi.
 
 max_iterations: 2000
 checkpoint_interval: 25
 log_level: INFO
 random_seed: 42
-diff_based_evolution: true    # DENEME BAŞARILI (2026-08-07, capset-diff-50):
-                              # thinking disabled sonrasi diff ÇALIŞIYOR. config.yaml
-                              # notu ("diff %64 kayıpla elendi") thinking enabled/high
-                              # durumuna aitti; thinking disabled'da fail oranı %16
-                              # (7/50 "No valid diff"), full-rewrite plato'sunu kırdı:
-                              # capset-200 (full-rewrite) 0.2628 → diff-50 0.2670,
-                              # n=8'de 318→360 (+42, en büyük sıçrama).
+diff_based_evolution: true    # DENEME: thinking disabled sonrasi diff
 max_code_length: 30000
 
 llm:

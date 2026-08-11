@@ -1,32 +1,37 @@
-# OpenEvolve konfigürasyonu — P4 (capset) keşif döngüsü (Faz P4.4)
-# Çalıştırma: evolve/run.ps1 -GeceKosusuBitti -ConfigPath evolve\config.capset.yaml
+# OpenEvolve konfigürasyonu — P4 (capset) × Kimi K3 duman dilimi (2026-08-07)
+# Çalıştırma: evolve/run.ps1 -GeceKosusuBitti -ConfigPath evolve\config.capset.kimi.yaml
 #   -Problem capset -Instance "data\capset\instances\capset-n7.cap;...n8;...n4"
-# GLM Coding Plan Lite (z.ai) — Claude kotası korunuyor (8317/Opus'a dokunma).
-# diff_based_evolution: false — GLM'de diff %64 kayıpla elendi (config.yaml notu).
-# system_message: problems/capset/prompt.md içeriği (rekor/hedef YOK — §0.5).
+#   -ProxyConfig config.kimi.yaml -Iterations 5
+# Amaç: (1) tesisat doğrulaması sıfıra yakın maliyetle (~$0.2/5 iter),
+# (2) Kimi Ambassador başvurusuna somut "K3 entegre" kanıtı.
+# config.capset.yaml'dan tek fark: llm bloğu → 8319 / kimi (upstream kimi-k3).
+# ⚠ K3 reasoning modeli (config.kimi.yaml ölçümleri): küçük bütçede content
+# boşalıyor; 20000 max_tokens ile bekleniyor ki sorun olmasın. Koşuda
+# "No valid code" görülürse: config.kimi.yaml'a thinking-disable override
+# ekle + container restart (tarif orada).
 
 max_iterations: 2000
 checkpoint_interval: 25
 log_level: INFO
 random_seed: 42
-diff_based_evolution: true    # DENEME BAŞARILI (2026-08-07, capset-diff-50):
-                              # thinking disabled sonrasi diff ÇALIŞIYOR. config.yaml
-                              # notu ("diff %64 kayıpla elendi") thinking enabled/high
-                              # durumuna aitti; thinking disabled'da fail oranı %16
-                              # (7/50 "No valid diff"), full-rewrite plato'sunu kırdı:
-                              # capset-200 (full-rewrite) 0.2628 → diff-50 0.2670,
-                              # n=8'de 318→360 (+42, en büyük sıçrama).
+diff_based_evolution: false   # GLM'de diff %64 kayıpla elendi; K3'te de full-rewrite ile başla
 max_code_length: 30000
 
 llm:
-  api_base: "http://localhost:8318/v1"   # cli-proxy-api GLM (config.glm.yaml)
+  api_base: "http://localhost:8319/v1"   # cli-proxy-api Kimi (config.kimi.yaml)
   api_key: "${OPENAI_API_KEY}"           # run.ps1 dolduruyor; repoya yazılmaz
   models:
-    - name: "glm-5"                      # upstream glm-5.2, z.ai Coding Plan Lite
+    - name: "kimi"                       # alias → upstream kimi-k3 (Moonshot PAYG)
       weight: 1.0
-  temperature: 0.8
+  temperature: 0.6            # ZORUNLU (2026-08-07 olcumleri): kimi-k3
+                              # thinking-ACIKKEN yalniz 1.0, thinking-KAPALIYKEN
+                              # (proxy override aktif) yalniz 0.6 kabul ediyor.
+                              # Model secim gerekcesi: k2.7-code elendi (thinking
+                              # kapatilamiyor; 20k butcenin 19.5k'si reasoning'e
+                              # gitti, kod uretemedi). K3+thinking-off = yalniz
+                              # icerige odeme (~5k token/cagri, ~$0.10).
   max_tokens: 20000
-  timeout: 600                # tam-dosya üretimi 3-10 dk; 180 sn retry fırtınası
+  timeout: 600                # tam-dosya üretimi uzun sürebilir; 180 sn retry fırtınası
   retries: 3
 
 prompt:
@@ -110,7 +115,6 @@ database:
 
 evaluator:
   timeout: 240                 # 3 instance x 55 sn solver limiti + tampon
-                               # (cap-set dogrulama O(|S|^2) ~0.2 sn/instance)
   cascade_evaluation: false
   parallel_evaluations: 2
   memory_limit_mb: 2048

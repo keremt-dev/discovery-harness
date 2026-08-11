@@ -31,6 +31,26 @@ Bu dosya Claude Code'a (claude.ai/code) bu depoda çalışırken rehberlik eder.
    Evolve döngüsü 8318'i kullanır (`evolve/config.yaml`, `evolve/run.ps1`).
    §0'daki "tek proxy" kuralı zayıfladı; gece koşusu bittiği için kabul
    edildi. Claude kotası dolunca geri 8317'ye dönülebilir (elle revert).
+   **Üçüncü proxy (2026-08-07):** **8319 / `config.kimi.yaml`** → Kimi/
+   Moonshot PAYG ($15 bakiye; `docker compose -f docker-compose.kimi.yml
+   up -d`). Doğrulandı: upstream modeller kimi-k2.6 / kimi-k2.7-code(-highspeed)
+   / kimi-k3; alias `kimi`→kimi-k3, `kimi-code`→kimi-k2.7-code; duman çağrısı
+   yeşil. ⚠ K3 reasoning modeli: küçük max_tokens'ta content boşalıyor
+   (GLM hastalığının aynısı, ölçüldü); `thinking:{type:disabled}` Moonshot'ta
+   çalışıyor (ölçüldü) — override AKTİF (2026-08-07: 20k bütçede bile
+   content boşaldı; thinking-kapalı modda temperature=0.6 ZORUNLU, açıkken
+   1.0). k2.7-code ELENDİ: thinking kapatılamıyor, 20k'nın 19.5k'sı
+   reasoning'e gitti (ölçüldü). Gerçek tarife: K3 çıktı $15/M, k2.7-code
+   $4/M — ama K3+thinking-off yalnız içeriğe ödediği için etkin maliyet
+   daha düşük (~$0.10/çağrı, kampanya ~$200 mertebesi; eski "$80" notu
+   yanlıştı). Amaç: ikinci motor + Kimi Ambassador başvurusuna somut
+   entegrasyon kanıtı (`outreach/` notları; repo'ya girmez).
+   **Duman testi YEŞİL (2026-08-07, `runs\evolve\capset-kimi-smoke4`):**
+   5/5 iterasyon geçerli kod; iter 2'de yeni en-iyi 0.2996→0.3419 (+0.0432,
+   ort. |S| 146→200); iterasyon ~200-245 sn (LLM ~60-90 sn); maliyet ~$0.5.
+   Koşu reçetesi: `run.ps1 -ConfigPath evolve\config.capset.kimi.yaml
+   -ProxyConfig config.kimi.yaml` + `CAPSET_SEED_TIME_S=50` (config'te
+   temperature 0.6 ZORUNLU — thinking-off modunun kuralı).
    **8317 tamiri (2026-08-05):** 04.08'deki `:latest` image güncellemesi
    claude executor'a `context_management` (clear_thinking_20251015)
    enjeksiyonu getirdi; Anthropic bunu thinking kapalıyken 400 ile
@@ -347,6 +367,208 @@ edilen risk; Docker'lı koşuma taşınabilir. Raporda not edilir.
       yeterli talimat: `problems/capset/CLAUDE.md`. Claude kotası tasarrufu
       için bu faz GLM'e devredildi; F/G sırasını değiştirmez, `harness/`
       çekirdeğine dokunmama kuralı Faz F sınavı yerine de geçer.
+- [ ] **Faz P5 — covering design (2026-08-09).** (v,k,t) covering: minimum
+      blok sayısı; LJCR arşivi hedef tablosu (arşiv dondu 2026-03-01; canlı
+      skorbord coveringrepository.com). **Faz B enstrümanı TAMAM:**
+      `problems/covering/` — SENSE=max, feasible fitness =
+      Schönheim(v,k,t)/|B| ∈ (0,1] (kanıtlı optimal ⇒ 1.0 tavan; teorem
+      normalizer, sızıntı yok), infeasible [-2,-1] bandı (capset deseni);
+      WORK_CAP/EXAMPLE_CAP ile evaluator hiçbir girdiyle takılmaz.
+      50 covering testi + tam süit 239/239 yeşil; `harness/` içinde sıfır
+      değişiklik (Faz F sınavı bir kez daha geçti). **Kürasyon:**
+      `data/covering/reference/curate_targets.py` → `targets.csv`
+      (8759 hücre; 4115 eligible; 1128 sweet). **Kalibrasyon:**
+      `verify_ljcr.py` — I1 (Schönheim ≤ low_bd) + I2 (low_bd ≤ size) +
+      T1 (Fort–Hedlund: 96/96 k=3,t=2 hücresi size=Schönheim) SERT temiz;
+      196 I3 tarihçe-hijyen bulgusu (rekor kıyası DAİMA `size` alanına).
+      Hedefler + iddia uyarıları: `data/covering/reference/hedef-notlari.md`
+      (gradyan: C(32,8,4) 620/lb552, C(24,6,4) 784/lb720, C(28,9,3) 56/lb50 —
+      üçü de 1996'dan beri dokunulmamış; bekçi: Fano, STS(13)).
+      **Faz C TAMAM (2026-08-09):** `problems/covering/enumerate.py` —
+      iterative deepening (Schönheim tabanı) + ilk-kapsanmamış-altküme
+      dallanması + ceil(uncovered/C(k,t)) budağı; leksikografik-ilk çözüm
+      deterministik; kapsam ENUM_CAP=1e5 (C(v,k), C(v,t)). Kanıtlar:
+      9 arşiv-kanıtlı hücre birebir (Fano 28 düğüm; C(7,4,3): Schönheim
+      11 fiilen çürütülüp 12 kanıtlandı, 450k düğüm/526ms; bekçi
+      C(13,3,2)=26 kendi enstrümanımızca 14ms'de kanıtlı); evaluator
+      çaprazı: enumerate çıktısı = evaluate_text feasible + tavan 1.0.
+      24 enumerate testi; covering toplam 74 test yeşil.
+      **Faz D TAMAM (2026-08-09):** `problems/covering/seed_solver.py` —
+      greedy kurulum (SAMPLE_CANDIDATES=8 örneklenmiş aday paneli; tam
+      max-gain taraması büyük hücrede Python'da onlarca sn sürer, bilinçli
+      hız/kalite dengesi) + redundancy removal + ruin-and-recreate;
+      anytime + atomik yazım, kısmi yazım PARTIAL_WRITE_EVERY=50 blokta
+      (erken timeout'ta gradyanlı infeasible çıktı kalır);
+      `COVERING_SEED_TIME_S` (default 10). `baseline.py` raporu
+      (docs/faz-d-covering-baseline.md, 15 sn bütçe): bekçiler kanıtlı
+      optimumda (7/7, 26/26 — tavan 1.0 çalışıyor); hedeflerde tohum
+      arşivin ÇOK gerisinde: C(24,6,4) 1213/784 (+429), C(28,9,3) 91/56
+      (+35), C(32,8,4) 1269/620 (+649). **Headroom KANITLI** — arşiv
+      değeri ulaşılabilirlik sertifikası (o boyutta covering fiilen var).
+      Covering test toplamı 85 yeşil. **Faz E başladı (2026-08-09):**
+      motor = GLM 8318 (kullanıcı seçimi; Opus plato kartı olarak saklı),
+      kapsam = duman 5 iter → kısa koşu 50 iter. Config:
+      `evolve/config.covering.yaml` (diff true, GLM ölçümüne dayalı;
+      system_message'ta arşiv değeri YOK). Fitness seti: v28+v32 (gradyan)
+      + v13 (bekçi); **HOLDOUT: v24 + v7 — döngü asla görmez**, genelleme
+      iddiası ancak holdout yeniden değerlendirmesiyle. Reçete:
+      `$env:COVERING_SEED_TIME_S="50"` ŞART (genom bütçeyi env'den okur;
+      set edilmezse 10 sn'de durur). LLM'siz adaptör kontrolü yeşil:
+      set skoru 0.6324 (3 sn bütçeyle; yenilecek taban).
+      **Duman testi YEŞİL (2026-08-09, runs\evolve\covering-glm-smoke1):**
+      tohum (50 sn bütçe) 0.6366; iter 5'te yeni en iyi **0.6725**
+      (+0.0359; ort. blok 460→404.7, 3/3 feasible). ⚠ diff kaybı 3/5
+      ("No valid diffs") — capset ölçümü %16 idi; 50'lik koşu gerçek
+      oranı ölçer, >%40 çıkarsa uzun koşuda full-rewrite'a dön.
+      Tamamlanan iterasyon ~180-195 sn (solver 150 sn + LLM); başarısız
+      diff iterasyonu ~12-60 sn.
+      **Kısa koşu SONUÇ (2026-08-09, runs\evolve\covering-glm-50):**
+      diff kaybı 7/50 = %14 (capset %16 ile tutarlı — duman 3/5 örneklem
+      gürültüsüydü; diff modu KALIR). 43 iterasyon tamam, 4 yeni en iyi:
+      0.6366 → **0.6798**. Per-instance (50 sn bütçe): v28 91→**82**,
+      v32 ~1269→**1072**, v13 26 (bekçi tavanda). **HOLDOUT genelleme
+      DOĞRULANDI:** v24 (döngü hiç görmedi) tohum 1198 → evrilen **1067**
+      (−131 blok, skor 0.6010→0.6748); v7 ikisi de kanıtlı optimum 7.
+      Arşive uzaklık (rekor hedefi): v28 82/56, v32 1072/620, v24
+      1067/784 — 50 iterde açığın ~%15-20'si kapandı, rekor için uzun
+      koşu + muhtemelen simetri/döngüsel konstrüksiyon sıçraması gerekir.
+      Checkpoint: `runs\evolve\covering-glm-50\checkpoints\checkpoint_50`.
+      **Dilim-2 SONUÇ (2026-08-09→10):** PLATO — 94 iter tamam, diff
+      kaybı 6/100 (%6), SIFIR yeni en iyi; en iyi hâlâ iter-28 (0.6798),
+      9 program aynı skora geri döndü (popülasyon yakınsamış). Genom
+      analizi: evrim CYCLIC KONSTRÜKSİYONU KEŞFETTİ (_cyclic_blocks,
+      _multi_cyclic_blocks, iki fazlı strateji, panel 8→24) ama SIĞ:
+      MULTI_BASE_MAX=2 — v32'de 620 blok ~20 orbit ister, 2 tabanla
+      imkânsız. Doğru fikir, yetersiz derinlik → yapısal sıçrama gerek.
+      **Dilim-3 OPUS PLATO KARTI — BAŞARILI (2026-08-10):**
+      checkpoint_150'den +25 iter, `evolve/config.covering.opus.yaml`
+      (8317/claude-opus-5, full-rewrite). 25/25 geçerli kod (sıfır hata);
+      plato kırıldı: 0.6798 → 0.7011 (iter ~155) → **0.7017** (iter 169).
+      Yapısal sıçrama: genom 374→606 satır — delta-değerlendirmeli
+      ELEMAN TAKASI yerel araması (_swap_ids/_delta/_apply + _random_kick),
+      t-altküme indeks sınıfı, tam büyütmeli greedy; cyclic hâlâ sığ
+      (MULTI_BASE_MAX=3). Per-instance (50 sn): v28 82→**74**, v32
+      1072→**1055**, v24 HOLDOUT 1067→**1048**, bekçiler tavanda.
+      Checkpoint: checkpoint_175. Gidişat: tohum→şimdi v28 91→74 (arşiv
+      56), v32 1269→1055 (arşiv 620 — hâlâ büyük açık; çok-orbitli cyclic
+      sıçraması gerekecek gibi), v24 1198→1048 (arşiv 784). Rekor eşiği
+      geçilirse sakin-makine re-run + coveringrepository.com çaprazı
+      olmadan iddia YAZILMAZ.
+      **Dilim-4 OPUS +25 — İKİNCİ SIÇRAMA GELDİ (2026-08-10):**
+      checkpoint_175'ten, prompt'a orbit aritmetiği vurgusuyla. 25/25
+      geçerli; yeni en iyi 0.7017 → **0.7064** (iter 189, genom 724
+      satır). Yapı: `orbit_skeleton` — orbit'leri kapsama/blok oranına
+      göre SINIRSIZ yığar (ORBIT_CAND=24 aday taban/seçim), kazanç <1
+      blok başına düşünce hedefli yama. Per-instance: v32 1055→**1016**
+      (kazanç tam hedefte), v24 HOLDOUT 1048→**1040**, v28 74 sabit,
+      bekçiler tavanda. Gidişat özeti (tohum→200. iter): v28 91→74
+      (arşiv 56, kalan açık 18), v32 1269→1016 (arşiv 620, kalan 396),
+      v24 1198→1040 (arşiv 784, kalan 256). Checkpoint: checkpoint_200.
+      **Dilim-5 V28 REKOR DENEMESİ (2026-08-10, KULLANICI ONAYIYLA):**
+      TEK hücre C(28,9,3) (arşiv 56, bizde 74); Opus 5, bütçe 70 sn
+      (COVERING_SEED_TIME_S=70), runner 80 sn (`run.ps1`e -SolverTimeoutS
+      parametresi EKLENDİ, default 55 korunur), 50 iter. TAZE koşu
+      (checkpoint devri YOK — instance seti değişince eski DB skorları
+      karşılaştırılamaz olur; kofn bench-v2 deseni): başlangıç genomu =
+      `evolve/artifacts/best_covering_gen200_20260810.py` (gen-200 en
+      iyisi). Config: `evolve/config.covering.v28.opus.yaml` (tek-hücre
+      SCALE metni, evaluator timeout 150). Çıktı:
+      `runs\evolve\covering-v28-opus-record`. NOT: tek-hücre odak =
+      genelleme iddiası YOK, yalnız rekor avı; genel çözücü hattı
+      checkpoint_200'de duruyor.
+      **Dilim-5 SONUÇ: ARŞİVLE EŞİTLİK (2026-08-10).** 39 iter tamam,
+      0 kod hatası; eğri 74→72→61→**56** (0.7857 = 44/56); koşuda 4 kez
+      cost=56 görüldü. Donmuş arşiv sayfası teyit: 50 ≤ C(28,9,3) ≤ 56 —
+      yani 30 yıllık bilinen-en-iyiye EŞİTLENDİ; rekor için ≤55 şart.
+      ⚠ VARYANS BULGUSU: en iyi genom seed-deterministik AMA anytime faz
+      bütçeleri duvar saatinden pay aldığı için makine yüküne duyarlı —
+      sakin makinede seed-0 yeniden koşumu 73 verdi (56'lık çözüm
+      evaluator tempdir'inde kaybolmuştu). DERS: cost=56 gören evaluator
+      anında çözümü SAKLAMALIYDIK; bundan sonra rekor koşularında çözüm
+      artifact'ı kalıcı dizine kopyalanır. Kurtarma: 12-seed'lik 70 sn
+      tarama (`runs\...\solutions\`). Rekor iddiası için ≤55 + sertifika
+      + coveringrepository.com çaprazı gerekmeye devam ediyor.
+      **Kurtarma + kalıcı düzeltme (2026-08-10):** 12-seed 70sn tarama
+      en iyi 59 verdi (bant 59-73; seed-0 iki koşuda 73 ve 63 — duvar-
+      saatli faz bütçeleri aynı seed'de bile tekrarlanabilirliği bozuyor,
+      ölçüldü). Derin probe (300 sn, seed 1/2/9/0) ayrıca koşuldu.
+      **ÇÖZÜM ARŞİVLEME KANCASI eklendi** (`harness/evolve_evaluator.py`
+      `_archive_solution`, probleme-agnostik, env-kapılı, asla raise
+      etmez): `DISCOVERY_ARCHIVE_DIR` + opsiyonel `DISCOVERY_ARCHIVE_
+      BELOW`/`ABOVE` eşikleri; feasible çözüm <stem>-cost<X>-<sha1_8>.txt
+      olarak kalıcılaşır (idempotent). 6 yeni test; adaptör 16/16.
+      BUNDAN SONRA her rekor koşusu ARCHIVE_DIR + BELOW eşiğiyle açılır.
+      **Kurtarma bilançosu (2026-08-10):** derin probe (300 sn) en iyi
+      **57** (v28-deep-s0.txt — ELDEKİ EN İYİ KALICI SERTİFİKA; arşiv
+      56'nın 1 üstü). Paralel-yük taklidi (8 eşzamanlı) yardım etmedi
+      (en iyi 61) — "yük hipotezi" çürüdü, varyans saf piyango.
+      Checkpoint DB taraması: cost=56 skorlayan TEK program var
+      (2d077b78, best'in kendisi); log'daki 4 görünüm aynı
+      değerlendirmenin echo'ları. Yani 56 tek şanslı çekilişti ve
+      çözümü kaybedildi (kanca o yüzden yazıldı). Sonraki dilim
+      checkpoint_50'den (record koşusu) ARCHIVE_DIR + BELOW=56 ile.
+      **Dilim-6 OPUS +50 KANCALI — SONUÇ (2026-08-10):** arşive ≤56
+      DÜŞMEDİ (piyango tekrar vurmadı); yeni en iyi yok (0.7857/56
+      sabit); 36 iter tamam, **14 iter (%28) kod-boyu 30k sınırına
+      kurban** (KULLANICI max_code_length'i 35k'ya çektirdi — üç
+      covering config'inde de uygulandı; bu koşu eski sınırla koştu).
+      İki hijyen düzeltmesi: (1) pytest kapısı arşiv env'lerini miras
+      alıp test çözümlerini gerçek arşive yazmıştı — `run.ps1`de kapı
+      öncesi env temizle/sonra geri koy eklendi, sızan dosyalar silindi;
+      (2) 35k artık aktif. DURUM: kalıcı en iyi sertifika 57 blok
+      (arşiv 56, lb 50); 56 bir kez gözlendi, kaybedildi; sonraki dilim
+      35k ile o %28'lik israfı geri kazanır.
+      **Dilim-7 GLM PİYANGO +100 (2026-08-10, KULLANICI PLANI: "önce
+      GLM, olmazsa Opus +50'ye dön" — fallback ÖN-ONAYLI):**
+      checkpoint_100'den; `evolve/config.covering.v28.glm.yaml` (8318,
+      diff true, 35k); env: SEED_TIME 70, ARCHIVE_DIR + BELOW=56;
+      -SolverTimeoutS 80. Başarısızlıkta (arşiv boş + yeni en iyi yok)
+      Opus +50 dilimi sorulmadan başlatılır (kullanıcı ön-onayı).
+      **Dilim-7 SONUÇ — EŞİTLEME KALICI (2026-08-10):** kanca ≤56'yı
+      YAKALADI: `cover-v28-k9-t3-cost56-c155b2fe.txt`. 96 iter, 3 diff
+      kaybı, 1 kod-boyu hatası (35k çalışıyor). Kesin doğrulama:
+      3276/3276 kapsama, 56 blok, 0 ihlal. **Canlı skorbord çaprazı
+      (coveringrepository.com, browser pane ile):** C(28,9,3)=56, lb 50,
+      tarih 14/11/1996 — ~30 yıldır iyileştirilmemiş; EŞİTLİK RESMİ.
+      Sertifika paketi: `data/covering/results/C28-9-3-cost56/`
+      (solution.txt + stdlib-only verify_cover.py + README). Fallback
+      koşulu TETİKLENMEDİ (arşiv boş değil) → 55 avı kararı kullanıcıda.
+      **Dilim-8 OPUS +50 — 55 AVI SONUÇ (2026-08-10):** 50/50 iter
+      temiz (35k: sıfır kod-boyu hatası); arşive İKİ yeni farklı 56
+      düştü (toplam 3 bağımsız 56-sertifikası — 56 tekrarlanabilir
+      bölgede) ama **55 YOK**; en iyi 0.7857/56 sabit. Yorum: 56 güçlü
+      çekim noktası; C(28,9,3)=56 gerçekten optimal olabilir (kanıt yok,
+      lb 50). **REKOR TARAMASI (aynı gün, LLM'siz, 70 sn/hücre):**
+      evrilmiş genel çözücü 8 bayat hücrede arşive karşı koşuldu —
+      3 ANINDA EŞİTLİK: C(21,10,3)=18, C(20,12,4)=20, C(25,16,4)=17;
+      kıl payı: C(23,10,3) 25/24, C(30,12,3) 32/30; zayıf: v29/v30-k9t3
+      (80/59, 91/66 — genom v28 boyut rejimine ayarlı), C(22,15,5)
+      30/22. **METODOLOJİK DERS (negatif bulgu):** "gap = size−low_bd"
+      iyileştirilebilirlik sinyali olarak ZAYIF — küçük bayat hücreler
+      çoğunlukla "bitmiş" oldukları için bayat; gerçek headroom
+      (size−optimum) muhtemelen ~0. Kürasyon v2'de gap yerine "bizim
+      ulaşabildiğimiz − arşiv" farkı kullanılmalı. **DERİN PROBE SONUÇ
+      (300 sn × 2 seed):** C(30,12,3) 32→30 = DÖRDÜNCÜ EŞİTLİK; üç
+      eşitlik iki seed'de de sabit (duvar görünümü); C(23,10,3) 25'te
+      kaldı (arşiv 24). REKOR YOK. **P5 BİLANÇO (2026-08-10):** 5 hücrede
+      30-yıllık bilinen-en-iyi EŞİTLENDİ — C(28,9,3)=56 (3 bağımsız
+      sertifika), C(21,10,3)=18, C(20,12,4)=20, C(25,16,4)=17,
+      C(30,12,3)=30; tümü bağımsız doğrulayıcıyla teyitli, paket:
+      `data/covering/results/` (C28 ayrı + esitlemeler-20260810/).
+      Ampirik yorum: küçük bayat hücrelerin arşiv değerleri büyük
+      olasılıkla optimal(e yakın); gerçek açık alan büyük hücrelerde
+      (v32: bizim 1016 / arşiv 620) — o da sprint değil maraton işi
+      (daha uzun bütçeler + evrim). Kalan tek küçük av: C(23,10,3)
+      24→23 (bizde 25; v28 emsali son bloğun 30 yıllık sertliğini
+      söylüyor).
+      **SIRADAKİ OTURUM İÇİN HAZIR PLAN (2026-08-10 akşamı yazıldı):**
+      `docs/plans/2026-08-11-v32-maraton.md` — v32 rekor maratonu:
+      çok-seed fitness (56-piyango tamiri), iş-sayaçlı determinizm
+      sözleşmesi, GLM 0.8 + Opus 0.2 ansamblı, 300 sn bütçe, 300 iterlik
+      gece koşusu, koşullu thinking-açık Opus kartı ve rekor prosedürü.
+      Görev görev, kodlu, TDD'li — superpowers:executing-plans ya da
+      subagent-driven-development ile uygulanır. Plana başlamadan önce
+      bu Faz P5 bölümünü oku.
 - [ ] **Faz G — P3 (HFFVRP-B).** cvrp-discovery evaluator'ünü KOPYALA,
       heterojen filo (tip başına kapasite + sabit maliyet) ve backhaul
       öncelik kısıtını ekle. ⚠ **Yuvarlama sözleşmesi DOĞRULANACAK**:
@@ -458,6 +680,17 @@ docker compose -f docker-compose.glm.yml up -d
 curl -s http://localhost:8318/v1/models
 ```
 
+Kimi/Moonshot container'ı (8319; key `config.kimi.yaml`'da dolu, 2026-08-07
+doğrulandı — alias `kimi`→kimi-k3, `kimi-code`→kimi-k2.7-code):
+
+```bash
+docker compose -f docker-compose.kimi.yml up -d
+```
+
+```bash
+curl -s -H "Authorization: Bearer $(grep -A1 'api-keys:' /c/kt/upwork/cli-api/config.kimi.yaml | grep -o '"[^"]*"' | tr -d '"')" http://localhost:8319/v1/models
+```
+
 Instance üretimi (deterministik; son argüman profil: `standart`|`sert`)
 ve baseline gap tablosu:
 
@@ -484,6 +717,42 @@ python -m problems.kofn.refsearch data/kofn/instances/gen-sert-n20-m4-s1.kofn
 
 ```bash
 python -m problems.kofn.baseline rapor.md
+```
+
+Covering (P5) kürasyon + kalibrasyon (LJCR arşivi; kaynak:
+`data/covering/reference/sources/coverdata.json`, dmgordo/LJCR):
+
+```bash
+python data/covering/reference/curate_targets.py
+```
+
+```bash
+python data/covering/reference/verify_ljcr.py
+```
+
+Covering kanıtlı optimum (küçük hücre; büyük hücrede "kapsam dışı" der):
+
+```bash
+python -m problems.covering.enumerate data/covering/instances/cover-v7-k3-t2.cover
+```
+
+Covering tohum + baseline raporu (bütçe sn/instance; rapor docs/ altına):
+
+```bash
+python -m problems.covering.baseline docs/faz-d-covering-baseline.md 15
+```
+
+Covering Faz E döngüsü (GLM 8318; COVERING_SEED_TIME_S env ŞART;
+duman için -Iterations 5, kısa koşu 50; PowerShell):
+
+```bash
+powershell -Command "Set-Location C:\kt\discovery-harness; \$env:COVERING_SEED_TIME_S='50'; .\evolve\run.ps1 -GeceKosusuBitti -Problem covering -Iterations 5 -ConfigPath evolve\config.covering.yaml -ProxyConfig config.glm.yaml -InitialProgram problems\covering\seed_solver.py -Instance 'data\covering\instances\cover-v28-k9-t3.cover;data\covering\instances\cover-v32-k8-t4.cover;data\covering\instances\cover-v13-k3-t2.cover' -OutDir runs\evolve\covering-glm-smoke1"
+```
+
+LLM'siz adaptör kontrolü (covering; kredi yakmadan boru hattı testi):
+
+```bash
+DISCOVERY_PROBLEM=covering COVERING_SEED_TIME_S=3 DISCOVERY_SOLVER_TIMEOUT_S=25 DISCOVERY_INSTANCE="data/covering/instances/cover-v28-k9-t3.cover;data/covering/instances/cover-v32-k8-t4.cover;data/covering/instances/cover-v13-k3-t2.cover" python harness/evolve_evaluator.py problems/covering/seed_solver.py
 ```
 
 Referans olarak cvrp-discovery'de **fiilen çalışan** komutlar:

@@ -34,6 +34,10 @@ param(
     # cli-proxy-api config dosyasi (API key kaynagi). Varsayilan: config.yaml
     # (Claude OAuth, 8317). GLM (8318) icin: config.glm.yaml.
     [string]$ProxyConfig = "config.yaml",
+    # Runner'in aday programa verdigi duvar saati (instance BASINA, sn).
+    # Cozucunun sure butcesi (or. COVERING_SEED_TIME_S) bunun ALTINDA
+    # kalmali; or. butce 70 icin 80 ver (covering v28 rekor dilimi).
+    [string]$SolverTimeoutS = "55",
     [switch]$GeceKosusuBitti
 )
 $ErrorActionPreference = "Stop"
@@ -67,11 +71,22 @@ if (-not $OutDir) {
 $env:DISCOVERY_PROBLEM = $Problem
 $env:DISCOVERY_INSTANCE = ($instanceList |
     ForEach-Object { (Resolve-Path $_).Path }) -join ';'
-$env:DISCOVERY_SOLVER_TIMEOUT_S = "55"
+$env:DISCOVERY_SOLVER_TIMEOUT_S = $SolverTimeoutS
 
 # Döngü öncesi enstrüman sağlığı: testler yeşil değilse başlama (guardrail)
+# Arşiv env'leri pytest'e SIZMASIN: adaptör testleri gerçek arşiv dizinine
+# çözüm yazar (2026-08-10'da yaşandı). Kapıdan önce kaldır, sonra geri koy.
+$savedArch = $env:DISCOVERY_ARCHIVE_DIR
+$savedBelow = $env:DISCOVERY_ARCHIVE_BELOW
+$savedAbove = $env:DISCOVERY_ARCHIVE_ABOVE
+Remove-Item Env:DISCOVERY_ARCHIVE_DIR -ErrorAction SilentlyContinue
+Remove-Item Env:DISCOVERY_ARCHIVE_BELOW -ErrorAction SilentlyContinue
+Remove-Item Env:DISCOVERY_ARCHIVE_ABOVE -ErrorAction SilentlyContinue
 python -m pytest tests/ -q
 if ($LASTEXITCODE -ne 0) { throw "test suite kırmızı — döngü başlatılmadı" }
+if ($savedArch) { $env:DISCOVERY_ARCHIVE_DIR = $savedArch }
+if ($savedBelow) { $env:DISCOVERY_ARCHIVE_BELOW = $savedBelow }
+if ($savedAbove) { $env:DISCOVERY_ARCHIVE_ABOVE = $savedAbove }
 
 $args = @($InitialProgram, "harness\evolve_evaluator.py",
           "--config", $ConfigPath,

@@ -20,8 +20,15 @@ Yapilandirma (env):
                              min — tek instance'a ezber olmasin, 2026-08-05)
   DISCOVERY_SOLVER_TIMEOUT_S solver sure limiti (instance BASINA), sn (55)
   DISCOVERY_PROBLEMS_ROOT    eklenti koku override (test icin)
+  DISCOVERY_ARCHIVE_DIR      set ise: feasible cozum metinleri bu dizine
+                             <stem>-cost<X>-<sha1_8>.txt olarak KALICI
+                             kopyalanir (2026-08-10 dersi: v28 rekor
+                             kosusunda cost=56 cozumu tempdir'le kayboldu)
+  DISCOVERY_ARCHIVE_BELOW    yalniz cost <= esik arsivle (min problemler)
+  DISCOVERY_ARCHIVE_ABOVE    yalniz cost >= esik arsivle (max problemler)
 """
 
+import hashlib
 import json
 import os
 import sys
@@ -47,6 +54,34 @@ def _result(metrics, artifacts):
     return metrics
 
 
+def _archive_solution(instance_path, solution_text, verdict):
+    """Feasible cozumu kalici dizine yazar (env-kapili; ASLA raise etmez).
+
+    Ayni icerik ayni dosya adina gider (sha1) -> idempotent, paralel
+    worker'lara dayanikli. Arsivleme hatasi degerlendirmeyi BOZAMAZ.
+    """
+    try:
+        arch = os.environ.get("DISCOVERY_ARCHIVE_DIR")
+        if not arch or not verdict.get("feasible") or not solution_text:
+            return
+        cost = float(verdict.get("cost", 0))
+        below = os.environ.get("DISCOVERY_ARCHIVE_BELOW")
+        if below and cost > float(below):
+            return
+        above = os.environ.get("DISCOVERY_ARCHIVE_ABOVE")
+        if above and cost < float(above):
+            return
+        root = Path(arch)
+        root.mkdir(parents=True, exist_ok=True)
+        digest = hashlib.sha1(solution_text.encode("utf-8")).hexdigest()[:8]
+        name = f"{Path(instance_path).stem}-cost{cost:g}-{digest}.txt"
+        target = root / name
+        if not target.exists():
+            target.write_text(solution_text, encoding="utf-8")
+    except Exception:
+        pass  # arsivleme yan etkidir; degerlendirme akisini asla bozmaz
+
+
 def _evaluate_one(problem, instance_path, program_path, timeout_s):
     """Tek instance icin (metrics, artifacts) dondurur."""
     # bozuk instance raise eder: enstruman hatasi, dongu durmali
@@ -62,6 +97,7 @@ def _evaluate_one(problem, instance_path, program_path, timeout_s):
         artifacts["stderr"] = rr.stderr_tail
 
     verdict = problem.evaluate_text(instance, rr.solution_text)
+    _archive_solution(instance_path, rr.solution_text, verdict)
     if not verdict["feasible"]:
         artifacts["violations"] = json.dumps(verdict["violations"])
 
