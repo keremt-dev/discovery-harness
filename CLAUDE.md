@@ -664,6 +664,33 @@ edilen risk; Docker'lı koşuma taşınabilir. Raporda not edilir.
       toplamda (50 ansambl + 25 Opus-FR) iyileşme yok. Checkpoint:
       checkpoint_75. Plan Görev 6 Step 3 gereği karar kullanıcıya
       sunuldu: Görev 7 (thinking-açık Opus, 8320) vs uzun koşu vs dur.
+      **GÖREV 7 THINKING-AÇIK OPUS — KIRILMA + EŞİTLEME (2026-08-11):**
+      kurulum: `C:\kt\upwork\cli-api\config.thinking.yaml` (config.yaml
+      eksi thinking-disabled override; context_management filtresi +
+      disable-cooling korundu) + `docker-compose.thinking.yml` (8320,
+      auths PAYLAŞILIR, pull_policy: never — :latest sürprizine karşı).
+      Replika ölçümü: 64k max_tokens'ta thinking ~42k token yiyor,
+      content 20.3k karakter TAM geliyor (finish=stop), süre 564 sn →
+      config timeout 900. `evolve/config.covering.v32.thinking.yaml`
+      (8320, 64k, checkpoint_interval 5 — koşu SONUNDA checkpoint
+      kaydı yok, 85 interval'e denk gelsin diye). 10 iter,
+      checkpoint_75'ten: 10/10 iterasyon tamam, content-boş 0, 1 çökük
+      çocuk (-2). **İLK thinking iterasyonu 75-iterlik 977 platosunu
+      kırdı: cost 620 = LJCR ARŞİV DEĞERİYLE EŞİTLEME** (0.5423→0.8581;
+      5 çocuk 620'de). Yapısal içerik: `affine_blocks` — v=p^m tespiti,
+      AG(m,p) öteleme grubu, altuzay kapanışı, cosetler; v=32=2⁵ için
+      tüm 3-flat'ler = 4·[5 seç 3]₂ = tam 620 blok, her 4 nokta ≤3-dim
+      afin altuzayda ⇒ kapsama teorem gereği. HARDCODE YOK (muayene
+      edildi; tek yoğun literal asal listesi). Doğrulama zinciri:
+      bağımsız verify_cover.py (35960/35960, 0 ihlal) + canlı skorbord
+      çaprazı (coveringrepository.com, browser pane: 620/lb 552,
+      14/11/1996 — ~30 yıl dokunulmamış). Arşiv kancası 3 bağımsız
+      620 kopyası yakaladı. Sertifika paketi:
+      `data/covering/results/C32-8-4-cost620/`. Maliyet: ~10 thinking
+      çağrısı ≈ ~480k output token (Opus OAuth). checkpoint_85 devam
+      noktası. DERS: plato "fikir tükendi" değildi — thinking'siz Opus
+      75 iterde bulamadığı sonlu-geometri paradigmasını thinking'li
+      ilk denemede kurdu; Görev 7 kartı kesin sonuç verdi.
 - [ ] **Faz G — P3 (HFFVRP-B).** cvrp-discovery evaluator'ünü KOPYALA,
       heterojen filo (tip başına kapasite + sabit maliyet) ve backhaul
       öncelik kısıtını ekle. ⚠ **Yuvarlama sözleşmesi DOĞRULANACAK**:
