@@ -61,6 +61,16 @@ if ($proxyCfg -match '(?ms)api-keys:\s*\r?\n\s*-\s*"([^"]+)"') {
     throw "cli-proxy-api $ProxyConfig içinde api-keys bulunamadı"
 }
 
+# Ansambl icin ikinci anahtar: 8317 (Claude OAuth) config.yaml'dan.
+# Yalniz ansambl configleri ${OPENAI_API_KEY_OPUS} kullanir; digerleri etkilenmez.
+$opusCfgPath = Join-Path "C:\kt\upwork\cli-api" "config.yaml"
+if (Test-Path $opusCfgPath) {
+    $opusCfg = Get-Content $opusCfgPath -Raw
+    if ($opusCfg -match '(?ms)api-keys:\s*\r?\n\s*-\s*"([^"]+)"') {
+        $env:OPENAI_API_KEY_OPUS = $Matches[1]
+    }
+}
+
 $instanceList = $Instance -split ';' | ForEach-Object { $_.Trim() } |
     Where-Object { $_ }
 if (-not $OutDir) {
