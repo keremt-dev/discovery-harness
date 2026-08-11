@@ -41,8 +41,13 @@ tam kaydı: repo `CLAUDE.md` Faz P5 bölümü.
 
 - Bu bir EŞİTLEMEDİR; rekor iddiası için ≤ 619 blok gerekir
   (alt sınır 552 — arada geniş, 30 yıldır kapanmamış bir boşluk var).
-- Konstrüksiyon klasik sonlu-geometri bilgisidir (620 değerinin 1996
-  kaynağının da bu aile olması kuvvetle muhtemel); iddia "yeni
+- Konstrüksiyon klasik sonlu-geometri bilgisidir ve kaynağı TEYİTLİ
+  (2026-08-11 literatür kontrolü): Gordon–Kuperberg–Patashnik, "New
+  constructions for covering designs", J. Combinatorial Designs 3
+  (1995) 269-284 (arXiv:math/9502238) — makale açıkça AG(m,p)
+  flat'lerini kullanır (p ≤ 11, ≤10⁴ nokta) ve v ≤ 32 tablolarını
+  kurar; La Jolla arşivinin küratörü de aynı Dan Gordon'dur. Yani
+  arşivdeki 620 neredeyse kesin bu ailedendir. İddia "yeni
   konstrüksiyon" değil, "LLM-evrim hattı doğru paradigmayı kendi
   buldu ve kanıtlı çözüm üretti"dir.
 - Tek hücre odaklı üretim: çözücünün genelleme iddiası bu sertifikanın
