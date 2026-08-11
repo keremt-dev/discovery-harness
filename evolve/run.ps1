@@ -84,19 +84,24 @@ $env:DISCOVERY_INSTANCE = ($instanceList |
 $env:DISCOVERY_SOLVER_TIMEOUT_S = $SolverTimeoutS
 
 # Döngü öncesi enstrüman sağlığı: testler yeşil değilse başlama (guardrail)
-# Arşiv env'leri pytest'e SIZMASIN: adaptör testleri gerçek arşiv dizinine
-# çözüm yazar (2026-08-10'da yaşandı). Kapıdan önce kaldır, sonra geri koy.
-$savedArch = $env:DISCOVERY_ARCHIVE_DIR
-$savedBelow = $env:DISCOVERY_ARCHIVE_BELOW
-$savedAbove = $env:DISCOVERY_ARCHIVE_ABOVE
-Remove-Item Env:DISCOVERY_ARCHIVE_DIR -ErrorAction SilentlyContinue
-Remove-Item Env:DISCOVERY_ARCHIVE_BELOW -ErrorAction SilentlyContinue
-Remove-Item Env:DISCOVERY_ARCHIVE_ABOVE -ErrorAction SilentlyContinue
+# Koşu env'leri pytest'e SIZMASIN: arşiv env'i test çözümlerini gerçek
+# arşive yazdı (2026-08-10); EVAL_SEEDS artifact anahtarlarını değiştirip
+# 3 testi kırdı (2026-08-11). Kapıdan önce kaldır, sonra geri koy.
+# (tests/conftest.py de autouse fixture ile aynı hijyeni kurar — çift emniyet.)
+$leakVars = @("DISCOVERY_ARCHIVE_DIR", "DISCOVERY_ARCHIVE_BELOW",
+              "DISCOVERY_ARCHIVE_ABOVE", "DISCOVERY_EVAL_SEEDS")
+$savedLeak = @{}
+foreach ($v in $leakVars) {
+    $savedLeak[$v] = [Environment]::GetEnvironmentVariable($v)
+    Remove-Item "Env:$v" -ErrorAction SilentlyContinue
+}
 python -m pytest tests/ -q
 if ($LASTEXITCODE -ne 0) { throw "test suite kırmızı — döngü başlatılmadı" }
-if ($savedArch) { $env:DISCOVERY_ARCHIVE_DIR = $savedArch }
-if ($savedBelow) { $env:DISCOVERY_ARCHIVE_BELOW = $savedBelow }
-if ($savedAbove) { $env:DISCOVERY_ARCHIVE_ABOVE = $savedAbove }
+foreach ($v in $leakVars) {
+    if ($savedLeak[$v]) {
+        [Environment]::SetEnvironmentVariable($v, $savedLeak[$v])
+    }
+}
 
 $args = @($InitialProgram, "harness\evolve_evaluator.py",
           "--config", $ConfigPath,
