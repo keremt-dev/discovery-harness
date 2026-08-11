@@ -651,6 +651,19 @@ edilen risk; Docker'lı koşuma taşınabilir. Raporda not edilir.
       "plato kartı" dilimiyle gelmişti (dilim-3: +25 iter, 0.6798→0.7017,
       yapısal sıçrama). Checkpoint: covering-v32-iter25\checkpoints\
       checkpoint_50.
+      **Dilim-3 OPUS PLATO KARTI — KIRILMADI (2026-08-11):** checkpoint_
+      50'den +25 Opus-only full-rewrite (config.covering.v32.opus.yaml).
+      24/25 tamam (1 kayıp: Anthropic upstream Overloaded 502 ×4 retry),
+      0 kod-boyu, 0 parse hatası — enstrüman tertemiz. SIFIR yeni en iyi;
+      dahası çocuklar 977-980'e AŞIRI sıkı kümelendi (4 bağımsız rewrite
+      tam 0.5423/977'ye geri döndü; kuyruk 0.53/990). Yorum: v28'deki
+      "56 çekim noktası"nın v32 karşılığı — mevcut paradigma (greedy +
+      orbit iskelet + yerel arama, 300 sn × 2 seed) ~977'de doyuyor;
+      Opus'un yapısal denemeleri ya muhafazakâr kaldı ya daha kötü
+      skorlandı. Arşiv açığı hâlâ büyük: 977 vs 620 (%36). 75 iter
+      toplamda (50 ansambl + 25 Opus-FR) iyileşme yok. Checkpoint:
+      checkpoint_75. Plan Görev 6 Step 3 gereği karar kullanıcıya
+      sunuldu: Görev 7 (thinking-açık Opus, 8320) vs uzun koşu vs dur.
 - [ ] **Faz G — P3 (HFFVRP-B).** cvrp-discovery evaluator'ünü KOPYALA,
       heterojen filo (tip başına kapasite + sabit maliyet) ve backhaul
       öncelik kısıtını ekle. ⚠ **Yuvarlama sözleşmesi DOĞRULANACAK**:
