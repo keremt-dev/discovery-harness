@@ -705,6 +705,18 @@ edilen risk; Docker'lı koşuma taşınabilir. Raporda not edilir.
       `data/covering/results/afin-esitlemeler-20260811/`. P5 bilançosu
       artık: **21 hücrede bilinen-en-iyi eşitlendi** (5 eski + 620 +
       15 tarama), tek genelleştirilmiş programla.
+      **REGRESYON BEKÇİSİ YEŞİL (2026-08-11, genelleme 4. ayak):**
+      thinking620 vs cap320, aynı bütçe (300/300/60/60 sn, seed 0),
+      asal-kuvvet OLMAYAN hücreler: v28-k9-t3 70 vs 73 (yeni genom 3
+      blok İYİ; arşiv 56), v24-k6-t4 (eski holdout) 1048 vs 1042
+      (+6, tek-seed anytime gürültü bandında), bekçiler v13=26 / v7=7
+      (ikisi de kanıtlı optimumda). Sonuç: afin sıçraması eski
+      yetenekleri BOZMADI. Kapsamlı-sınırlı genelleme iddiasının dört
+      ayağı tamam (holdout + sıfır-ayar + kesin doğrulama + regresyon);
+      formal iddia için kalan iş mekanik: covering benchmark dokümanı
+      (sabit set, asal-kuvvet dışı hücreler dahil, sakin-makine
+      çok-seed protokol, tohum/arşiv kolonları). Ham veri:
+      runs\evolve\regresyon-20260811\results.csv.
 - [ ] **Faz G — P3 (HFFVRP-B).** cvrp-discovery evaluator'ünü KOPYALA,
       heterojen filo (tip başına kapasite + sabit maliyet) ve backhaul
       öncelik kısıtını ekle. ⚠ **Yuvarlama sözleşmesi DOĞRULANACAK**:
