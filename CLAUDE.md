@@ -691,6 +691,20 @@ edilen risk; Docker'lı koşuma taşınabilir. Raporda not edilir.
       noktası. DERS: plato "fikir tükendi" değildi — thinking'siz Opus
       75 iterde bulamadığı sonlu-geometri paradigmasını thinking'li
       ilk denemede kurdu; Görev 7 kartı kesin sonuç verdi.
+      **AFİN GENELLEME TARAMASI (2026-08-11, LLM'siz):** analitik
+      ön-tarama (8759 hücre, kapalı formül p^(m−d)·[m seç d]_p): saf
+      afin sayısı arşivden küçük hücre YOK (anında-rekor fırsatı yok;
+      küratörler geometriyi biliyor); 17 hücrede arşiv = afin birebir.
+      Kazanan genom 17 hücrede koşuldu (3 rekor-şanslı 300 sn + 14
+      eşitleme-adayı 120 sn, seed 0): **15 EŞİTLEME** — en önemlisi
+      C(49,8,2)=49: saf afin 56 verir, evrilmiş yerel arama 56→49'a
+      indirdi (eşitleme ARAMADAN, konstrüksiyondan değil). Kaçanlar:
+      C(27,10,3) 36/arşiv 35 (1 blok; uzun-probe adayı), C(32,18,5)
+      99/56 (dolgulu afin verimsiz). v=64 t=5 bellek riskiyle atlandı.
+      15/15 bağımsız doğrulayıcıdan geçti; paket:
+      `data/covering/results/afin-esitlemeler-20260811/`. P5 bilançosu
+      artık: **21 hücrede bilinen-en-iyi eşitlendi** (5 eski + 620 +
+      15 tarama), tek genelleştirilmiş programla.
 - [ ] **Faz G — P3 (HFFVRP-B).** cvrp-discovery evaluator'ünü KOPYALA,
       heterojen filo (tip başına kapasite + sabit maliyet) ve backhaul
       öncelik kısıtını ekle. ⚠ **Yuvarlama sözleşmesi DOĞRULANACAK**:
