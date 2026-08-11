@@ -611,6 +611,25 @@ edilen risk; Docker'lı koşuma taşınabilir. Raporda not edilir.
       bacağı worker-birebir OpenAILLM ile canlı test edildi (8318, 'OK',
       content dolu). Duman en iyisi: `evolve/artifacts/
       best_v32_smoke_20260811.py` (gece koşusu başlangıç adayı).
+      **Gece koşusu BEKLEMEDE (2026-08-11, kullanıcı kararı):** her şey
+      hazır, tek komutla başlar (repo kökünden; ~18-24 saat, ~237 GLM +
+      ~63 Opus çağrısı):
+      ```powershell
+      $env:COVERING_SEED_TIME_S="300"
+      $env:DISCOVERY_EVAL_SEEDS="0,1"
+      $env:DISCOVERY_ARCHIVE_DIR="C:\kt\discovery-harness\runs\evolve\covering-v32-maraton\archive"
+      $env:DISCOVERY_ARCHIVE_BELOW="700"
+      .\evolve\run.ps1 -GeceKosusuBitti -Problem covering -Iterations 300 `
+        -SolverTimeoutS 320 -ConfigPath evolve\config.covering.v32.yaml `
+        -ProxyConfig config.glm.yaml `
+        -InitialProgram evolve\artifacts\best_v32_smoke_20260811.py `
+        -Instance "data\covering\instances\cover-v32-k8-t4.cover" `
+        -OutDir runs\evolve\covering-v32-maraton
+      ```
+      Başlangıç genomu seçenekleri: duman en iyisi (0.5423/978, önerilen)
+      ya da cap320 (0.5176/1016, planın harfiyen hali). Koşu sonrası:
+      plan Görev 6 Step 2-3 (analiz; cost<620 ise Görev 8 rekor
+      prosedürü, değilse Görev 7 thinking-açık Opus kartı kararı).
 - [ ] **Faz G — P3 (HFFVRP-B).** cvrp-discovery evaluator'ünü KOPYALA,
       heterojen filo (tip başına kapasite + sabit maliyet) ve backhaul
       öncelik kısıtını ekle. ⚠ **Yuvarlama sözleşmesi DOĞRULANACAK**:
