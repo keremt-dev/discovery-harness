@@ -1,0 +1,137 @@
+# OpenEvolve konfigürasyonu — P5 covering V32 OPUS PLATO KARTI (2026-08-11)
+# Ansambl dilimleri (checkpoint_50) 0.5423/977'de platoya girdi; v28
+# emsali (dilim-3): kirilma Opus-only FULL-REWRITE ile gelir. Bu config
+# v32 ansambl config'inin varyanti: tek model claude-opus-5 (8317),
+# diff kapali. Fitness = 2-seed ortalamasi (DISCOVERY_EVAL_SEEDS="0,1").
+# Butce 300 sn (COVERING_SEED_TIME_S=300), runner 320 (-SolverTimeoutS 320).
+# Calistirma: -ProxyConfig config.yaml (8317 anahtari OPENAI_API_KEY olur),
+# -Checkpoint runs\evolve\covering-v32-iter25\checkpoints\checkpoint_50.
+# system_message'ta arşiv/rekor değeri YOK (§0.5 sızıntı kuralı).
+
+max_iterations: 2000
+checkpoint_interval: 25
+log_level: INFO
+random_seed: 42
+diff_based_evolution: false   # PLATO KARTI: yapisal sicrama tam-dosya
+                              # yeniden yazimla gelir (v28 dilim-3 kaniti).
+max_code_length: 45000  # 35k asimi: 25-iter dilimde 9/25 cagri 35.4-38k'ya
+                        # carpip zayi oldu (genom 29.5k + additive diff;
+                        # 2026-08-11). Onceki basamak: 30k->35k (2026-08-10).
+
+llm:
+  api_base: "http://localhost:8317/v1"   # cli-proxy-api Claude OAuth (config.yaml)
+  api_key: "${OPENAI_API_KEY}"           # run.ps1 -ProxyConfig config.yaml dolduruyor
+  models:
+    - name: "claude-opus-5"
+      weight: 1.0
+  temperature: 0.8
+  max_tokens: 20000
+  timeout: 600
+  retries: 3
+
+prompt:
+  system_message: |
+    You are evolving `solver.py`, a single-file Python solver for the
+    **covering design** problem C(v,k,t): given a universe {1..v}, output
+    a collection of k-element blocks such that EVERY t-element subset of
+    the universe is contained in at least one block. MINIMIZE the number
+    of blocks.
+
+    Contract — breaking any of these gets a heavily penalized score:
+    - CLI: python solver.py <instance.cover> <output.txt>
+    - Input: line-based text; '#' starts a comment. Headers: `v <int>`,
+      `k <int>`, `t <int>` with v > k > t >= 1. Nothing else.
+    - Output: one block per line — EXACTLY k DISTINCT integers in 1..v,
+      separated by whitespace. Order inside a line and order of lines do
+      not matter; a block is a SET. Two lines that contain the same set of
+      numbers are a VIOLATION (duplicate_block). A line with the wrong
+      count, repeats, out-of-range or non-integer tokens is a violation
+      (bad_block) and poisons the whole solution. Lines starting with '#'
+      are ignored; you MAY write `# size <int>` as your own block count —
+      it is IGNORED for scoring (the evaluator recounts exactly) but
+      logged as an honesty sensor.
+    - Feasibility: every one of the C(v,t) t-subsets must be inside at
+      least one of your blocks. The evaluator recomputes coverage with
+      exact integer arithmetic; any uncovered t-subset makes the solution
+      infeasible and scores far below ANY feasible covering, no matter
+      how bloated. Feasibility first, then shrink.
+    - Scoring (feasible): Schoenheim_lower_bound(v,k,t) / block_count,
+      in (0, 1]. Fewer blocks = higher score; 1.0 means you matched the
+      Schoenheim bound (rarely tight for larger cells). The reported
+      score is the MEAN over all instances in the fitness set; one
+      infeasible instance drags the mean hard, so robustness across
+      (v,k,t) matters as much as peak quality on one cell.
+    - Determinism: accept an optional `--seed N` CLI argument (default 0).
+      Same input AND same seed MUST produce the same output. Derive ALL
+      phase budgets from WORK COUNTERS (iteration counts, node counts),
+      NOT from wall-clock fractions — wall-clock may only be used as the
+      final hard stop. Your score is the MEAN over multiple --seed runs,
+      so a solver that is only occasionally lucky scores poorly.
+    - Resources: single process, CPU only; time budget in seconds is given
+      by the COVERING_SEED_TIME_S environment variable (300 s in this run) and
+      the runner hard-kills at 320 s wall clock. Python stdlib and numpy are
+      available. No network; no file access other than the two argv paths.
+    - Code size: files over the harness limit are REJECTED OUTRIGHT —
+      the mutation is wasted without ever being run. Keep solver.py lean:
+      when you add a phase or data structure, PRUNE code that no longer
+      earns its place (dead strategies, superseded helpers, verbose
+      comments). Prefer REPLACING existing code over accumulating new
+      code on top of it.
+
+    ANYTIME IS MANDATORY. Maintain a `.tmp` file and atomically replace
+    the real output (`os.replace`) whenever you have a better solution.
+    Write a COMPLETE covering as early as possible (a greedy one within a
+    few seconds), then keep replacing it with smaller coverings until the
+    budget runs out. If the runner kills you before your first write, the
+    empty output scores at the very bottom. Partial coverage output is
+    graded (less-uncovered is less bad) but still infeasible — reaching
+    full coverage fast is the first milestone on every instance.
+
+    Promising directions:
+    - Stronger greedy: pick each block to maximize NEWLY covered t-subsets
+      (the seed only samples a few candidates per step — full or smarter
+      candidate evaluation with incremental data structures is an obvious
+      first upgrade).
+    - Local search: remove blocks whose t-subsets are all covered twice;
+      ruin-and-recreate (drop j blocks, re-repair greedily, keep if not
+      worse); block-exchange moves; simulated annealing over block sets.
+    - SYMMETRY is the big lever in covering design construction: cyclic
+      constructions (choose base blocks, close them under x -> x+1 mod v),
+      or other group actions, shrink the search space enormously and
+      produce very regular coverings. Evolve code that SEARCHES for good
+      base blocks under a group action — do NOT hardcode specific block
+      lists or known table values. Mind the orbit arithmetic: one base
+      block yields at most v blocks, so a covering of B blocks needs on
+      the order of B/v base blocks — often 15-25 for the larger cells
+      here, not 2-3. A cyclic phase that tries only a couple of base
+      blocks cannot even in principle assemble a competitive covering
+      for the big cells; search over SETS of many base blocks (e.g.
+      greedily add the orbit covering the most uncovered t-sets, then
+      patch the remainder).
+    - Mixed strategies: symmetric skeleton + greedy patching of the
+      leftover uncovered t-subsets often beats either alone.
+
+    SCALE: this run targets a SINGLE cell — v=32, k=8, t=4 (C(32,4)=35960
+    t-subsets; each block covers C(8,4)=70). Good coverings run to many
+    hundreds of blocks, so a cyclic skeleton needs on the order of 20-30
+    base-block orbits (one orbit = at most 32 blocks). The 300 s budget
+    is there to be USED: deep orbit-set search, aggressive endgame
+    (delete a block, repair with multi-block chains), restarts.
+  num_top_programs: 3
+  num_diverse_programs: 2
+  include_artifacts: true      # stderr + violation özeti LLM'e geri döner
+
+database:
+  population_size: 200
+  archive_size: 50
+  num_islands: 4
+  elite_selection_ratio: 0.1
+  exploration_ratio: 0.2
+  exploitation_ratio: 0.7
+
+evaluator:
+  timeout: 1400                # 2 seed x 320 sn + dogrulama + tampon
+  cascade_evaluation: false
+  parallel_evaluations: 4      # cekirdek sayisi el veriyor; LLM gecikmesiyle ortusur
+  memory_limit_mb: 2048
+  enable_artifacts: true
