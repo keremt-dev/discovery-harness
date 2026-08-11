@@ -19,6 +19,12 @@ Yapilandirma (env):
                              (fitness = ortalama combined_score; feasible =
                              min — tek instance'a ezber olmasin, 2026-08-05)
   DISCOVERY_SOLVER_TIMEOUT_S solver sure limiti (instance BASINA), sn (55)
+  DISCOVERY_EVAL_SEEDS       virgullu seed listesi ("0,1"): aday her
+                             instance icin seed basina "--seed N" arguman-
+                             lariyla bir kez kosar; combined_score =
+                             seed'lerin ORTALAMASI, cost = en iyi kosu,
+                             feasible = min. Bossa tek kosu, arg'siz
+                             (mevcut davranis; 2026-08-11 v32 plani)
   DISCOVERY_PROBLEMS_ROOT    eklenti koku override (test icin)
   DISCOVERY_ARCHIVE_DIR      set ise: feasible cozum metinleri bu dizine
                              <stem>-cost<X>-<sha1_8>.txt olarak KALICI
@@ -83,31 +89,45 @@ def _archive_solution(instance_path, solution_text, verdict):
 
 
 def _evaluate_one(problem, instance_path, program_path, timeout_s):
-    """Tek instance icin (metrics, artifacts) dondurur."""
+    """Tek instance icin (metrics, artifacts); DISCOVERY_EVAL_SEEDS
+    varsa seed basina bir kosu, fitness = ortalama (56-piyango dersi:
+    tek kosunun makine-ani sansini degil programi olc)."""
     # bozuk instance raise eder: enstruman hatasi, dongu durmali
     instance = problem.parse_instance(instance_path)
-    rr = run_candidate(program_path, instance_path, timeout_s)
+    seeds_env = os.environ.get("DISCOVERY_EVAL_SEEDS", "").strip()
+    seed_list = [s.strip() for s in seeds_env.split(",") if s.strip()] \
+        if seeds_env else [None]
 
     artifacts = {}
-    if rr.timed_out:
-        artifacts["failure"] = f"timeout: {timeout_s:.0f} sn duvar saati asildi"
-    elif rr.returncode != 0:
-        artifacts["failure"] = f"solver exit code {rr.returncode}"
-    if rr.stderr_tail:
-        artifacts["stderr"] = rr.stderr_tail
+    runs = []
+    for seed in seed_list:
+        extra = ["--seed", seed] if seed is not None else None
+        rr = run_candidate(program_path, instance_path, timeout_s,
+                           extra_args=extra)
+        tag = f"seed{seed}:" if seed is not None else ""
+        if rr.timed_out:
+            artifacts[f"{tag}failure"] = (
+                f"timeout: {timeout_s:.0f} sn duvar saati asildi")
+        elif rr.returncode != 0:
+            artifacts[f"{tag}failure"] = f"solver exit code {rr.returncode}"
+        if rr.stderr_tail:
+            artifacts[f"{tag}stderr"] = rr.stderr_tail
+        verdict = problem.evaluate_text(instance, rr.solution_text)
+        _archive_solution(instance_path, rr.solution_text, verdict)
+        if not verdict["feasible"]:
+            artifacts[f"{tag}violations"] = json.dumps(verdict["violations"])
+        runs.append((verdict, rr))
 
-    verdict = problem.evaluate_text(instance, rr.solution_text)
-    _archive_solution(instance_path, rr.solution_text, verdict)
-    if not verdict["feasible"]:
-        artifacts["violations"] = json.dumps(verdict["violations"])
-
+    best_v, best_rr = max(
+        runs, key=lambda vr: combined_score(vr[0]["fitness"], problem.sense))
     metrics = {
-        "combined_score": float(
-            combined_score(verdict["fitness"], problem.sense)),
-        "cost": float(verdict["cost"]),
-        "feasible": 1.0 if verdict["feasible"] else 0.0,
-        "solver_s": round(rr.wall_s, 3),
-        "eval_ms": float(verdict["eval_ms"]),
+        "combined_score": sum(
+            combined_score(v["fitness"], problem.sense)
+            for v, _ in runs) / len(runs),
+        "cost": float(best_v["cost"]),
+        "feasible": min(1.0 if v["feasible"] else 0.0 for v, _ in runs),
+        "solver_s": round(sum(rr.wall_s for _, rr in runs), 3),
+        "eval_ms": float(sum(v["eval_ms"] for v, _ in runs)),
     }
     return metrics, artifacts
 
