@@ -13,9 +13,9 @@ accepted currency of this literature and one we adopt. Follow-on
 systems refine the search architecture: ShinkaEvolve [Sakana AI 2025]
 targets sample efficiency (circle packing, Heilbronn triangles,
 autocorrelation inequalities), CodeEvolve [2025] provides an open
-implementation, and Nagda et al. apply reinforced variants to Ramsey
-and Zarankiewicz numbers, explicitly reporting recovery of known
-bounds alongside improvements. Negative results have also begun to
+implementation, Nagda et al. apply reinforced generation to Ramsey numbers,
+explicitly reporting recovery of known bounds alongside improvements,
+and Bhan et al. extend the approach to Zarankiewicz numbers. Negative results have also begun to
 appear (bijection discovery with OpenEvolve remaining hard), which we
 take as a healthy norm and follow in Sections 7.4 and 9. Analyses of
 *why* these loops work concentrate on the evolutionary component
