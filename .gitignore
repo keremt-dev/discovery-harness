@@ -32,3 +32,5 @@ paper/page*.png
 
 paper/arxiv/
 paper/chk.log
+paper/telo-anon/
+!paper/telo-anon-review.pdf

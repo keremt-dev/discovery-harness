@@ -46,13 +46,12 @@ e-posta main.tex'te 3kerem@gmail.com; PDF derlemesi temiz (15 sayfa,
 ## Adım 3 — Gönderim günü son rötuşlar (~1 saat, birlikte yaparız)
 1. **Literatür tazeleme**: docs/literatur-taramasi-b3.md'deki taramayı
    tekrarla (alan hızlı; yeni emsal çıktıysa §2'ye eklenir).
-2. **Anonimlik kontrolü**: dl.acm.org/journal/telo/author-guidelines
-   sayfasını KENDİ tarayıcında aç (benim ortamda erişim engelliydi) ve
-   "single-anonymous / double-anonymous" satırını bul.
-   - Tek-anonim ise: mevcut PDF olduğu gibi gider (isim görünür).
-   - Çift-anonim ise: main.tex'te documentclass'a `anonymous` ekle:
-     `[acmsmall,screen,review,anonymous]`, repo linkini "anonymized
-     for review" notuyla maskele, yeniden derle.
+2. **Anonimlik: ÇÖZÜLDÜ (2026-08-13)** — TELO çift-anonim (web
+   aramasıyla teyit). İnceleme PDF'i hazır:
+   `paper/telo-anon-review.pdf` (ANONYMOUS AUTHOR(S), acks çıkarıldı,
+   repo/DOI linkleri "withheld for review" — tam halleri cover
+   letter'da). ScholarOne'a ANA BELGE olarak BU yüklenir; kimlikli
+   main.pdf YÜKLENMEZ.
 3. Zenodo DOI'yi makleye işle (Adım 1.5), yeniden derle, push.
 
 ## Adım 4 — TELO'ya gönderim (ScholarOne, ~45 dk)
