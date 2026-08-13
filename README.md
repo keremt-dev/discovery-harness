@@ -1,5 +1,7 @@
 # discovery-harness
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21920942.svg)](https://doi.org/10.5281/zenodo.21920942)
+
 A **problem-agnostic scientific discovery harness**: an LLM evolves solver
 programs (OpenEvolve loop), and a paranoid, *exact* verifier scores every
 candidate. The approach follows DeepMind's FunSearch (Nature, 2024) /
