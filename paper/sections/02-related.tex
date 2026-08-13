@@ -1,0 +1,57 @@
+\section{Related Work}\label{sec:related}
+
+\subsection{LLM-driven evolutionary program search}
+
+FunSearch \cite{romera2024funsearch} established that pairing an LLM
+mutation operator with a programmatic evaluator can produce new
+mathematical constructions (cap sets, bin-packing heuristics).
+AlphaEvolve \cite{novikov2025alphaevolve} generalized the recipe to
+whole codebases and reported results across more than fifty
+mathematical problems --- rediscovering the best known construction
+in ${\sim}75\%$ of them and improving it in ${\sim}20\%$, a framing
+that makes \emph{rediscovery rate} an accepted currency of this
+literature and one we adopt. Follow-on systems refine the search
+architecture: ShinkaEvolve \cite{shinka2025} targets sample
+efficiency (circle packing, Heilbronn triangles, autocorrelation
+inequalities), CodeEvolve \cite{codeevolve2025} provides an open
+implementation, and Nagda et al.\ apply reinforced variants to Ramsey
+and Zarankiewicz numbers \cite{nagda2026ramsey,zarankiewicz2026llm},
+explicitly reporting recovery of known bounds alongside improvements.
+Negative results have also begun to appear (bijection discovery with
+OpenEvolve remaining hard \cite{bijection2025openevolve}), which we
+take as a healthy norm and follow in Sections~\ref{sec:benchmark}
+and~\ref{sec:limitations}. Analyses of \emph{why} these loops work
+concentrate on the evolutionary component \cite{zhang2024understanding};
+the contribution of specific \emph{model capabilities} --- in
+particular extended reasoning --- has, to our knowledge, not been
+isolated experimentally in a discovery loop. Across all published
+problem lists of this lineage we find no covering-design instances;
+both gaps are addressed here.
+
+\subsection{Reasoning-mode ablations}
+
+Controlled comparisons of LLMs with reasoning enabled versus disabled
+exist outside discovery loops, with strikingly mixed outcomes:
+reasoning helps handwriting-synthesis agents \cite{handwriting2026}
+and long-form information-control tasks \cite{pic2025}, is neutral
+for prompt-attack detection \cite{promptattack2026}, and
+\emph{degrades} content-moderation accuracy \cite{moderation2026}.
+This task-dependence is the backdrop against which our result should
+be read: in the structural-paradigm-shift regime of
+Section~\ref{sec:experiment}, the effect is not a few points of
+accuracy but a categorical 3/3-versus-0/3 separation with a 36\%
+objective improvement.
+
+\subsection{Covering designs}
+
+Upper bounds for covering numbers $C(v,k,t)$ are curated by the La
+Jolla Covering Repository and its live successor \cite{ljcr}. The
+founding constructions paper \cite{gordon1995new} combined greedy
+methods, finite-geometry constructions (including $\mathrm{AG}(m,p)$
+flats --- the family our loop rediscovers), and synthesis rules;
+subsequent stochastic-search work (simulated annealing
+\cite{nurmela1993upper}, cooperative tabu search
+\cite{dai2006cooperative}) improved many small cells. The specific
+cells we target have been stable for 15--30 years, and we find no
+post-2020 method wave touching them --- a stagnant-frontier setting
+that makes exact ties informative even though they set no records.

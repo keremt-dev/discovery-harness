@@ -1,0 +1,39 @@
+\section{Conclusion}\label{sec:conclusion}
+
+We set out to answer a question that the LLM-evolutionary discovery
+literature has left implicit: \emph{which model capability does the
+breakthrough work?} On a covering-design campaign instrumented with
+mathematically exact verification at every step, the answer was
+sharp. Incremental evolution --- cheap diff mutations, ensemble
+engines, even full rewrites by the same flagship model --- carried
+the population to a genuine plateau and no further. Extended
+reasoning, and nothing else we varied, converted the model's latent
+textbook mathematics into working general code: three independent
+reasoning-enabled slices each rediscovered the classical
+affine-geometry construction and matched a value untouched since
+1996, while fifty-five reasoning-disabled attempts never left the
+plateau's basin.
+
+The result reframes how we read systems in the FunSearch/AlphaEvolve
+lineage: the evolutionary loop is the \emph{delivery mechanism},
+exact verification is the \emph{warrant}, but on construction-shaped
+problems the paradigm shift itself appears to be a reasoning
+phenomenon --- one that is neither retrievable by direct recall nor
+emittable without code, as our dissociation probes show. Practically,
+this yields a two-tier operating recipe (evolve cheaply; spend
+reasoning tokens only at plateaus) and a set of instrument-hygiene
+mechanisms (multi-seed fitness, work-counter determinism, solution
+archiving, leak-audited prompts) that we found necessary to make any
+of the above measurable.
+
+Under a pre-registered 29-cell benchmark the single evolved program
+matched 22 best-known values --- including four outside its
+discovered construction family --- with every tie independently
+re-verified. The frontier itself did not move: no archive value was
+improved, and the stagnant small cells are probably near-optimal.
+Records in this domain will require new construction families, which
+suggests the next experiment in kind: pointing reasoning-enabled
+slices at cells whose best-known values do \emph{not} descend from
+clean algebraic constructions. Our harness, certificates, protocols,
+raw logs, and negative results are released to make both replication
+and that next step possible.

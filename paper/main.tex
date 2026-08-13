@@ -1,33 +1,79 @@
-%% C1 — TELO gonderi iskeleti (acmart). Govde donusumu icin:
-%%   choco install pandoc
-%%   pandoc -f gfm -t latex paper/NN-*.md  (bolum bolum; tablolar elden gecirilir)
+%% C1 — TELO gonderisi (acmart). Derleme: tectonic main.tex  ya da  Overleaf (ACM TELO sablonu).
 \documentclass[acmsmall,screen,review]{acmart}
 
 \acmJournal{TELO}
-\acmVolume{0}\acmNumber{0}\acmArticle{0}\acmMonth{0}
+\acmVolume{0}\acmNumber{0}\acmArticle{0}\acmMonth{8}\acmYear{2026}
 
 \usepackage{listings}
-\lstset{basicstyle=\ttfamily\footnotesize, language=Python,
-        breaklines=true, frame=single}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning}
+\lstset{basicstyle=\ttfamily\scriptsize, language=Python,
+        breaklines=true, frame=single, columns=fullflexible,
+        keepspaces=true}
+\newcommand{\gauss}[2]{\genfrac{[}{]}{0pt}{}{#1}{#2}}
+\citestyle{acmauthoryear}
 
 \title{Reasoning Mode Breaks the Plateau: Verified LLM-Evolutionary
        Search Matches Three Decades of Best-Known Covering Designs}
 
 \author{Kerem T\"urky{\i}lmaz}
-\affiliation{\institution{Independent Researcher}\country{T\"urkiye}}
-\email{TODO@example.org} % TODO: yayin icin e-posta tercihi
+\affiliation{%
+  \institution{Independent Researcher}
+  \country{T\"urkiye}}
+\email{kerem.turkyilmaz@example.org} % TODO: yayin e-postasi tercihi
 
 \begin{abstract}
-% Kaynak: paper/01-introduction.md "Abstract (final)" blogu —
-% birebir aktarilacak (pandoc ya da elle).
-TODO: abstract buraya.
+LLM-driven evolutionary program search has produced striking
+mathematical constructions, but the literature says little about
+\emph{which model capability does the breakthrough work}. We study
+this question on covering designs $C(v,k,t)$ --- a classical
+construction domain untouched by the FunSearch/AlphaEvolve lineage ---
+using a problem-agnostic evolution harness whose defining property is
+that every score is recomputed by a mathematically exact verifier and
+no claim rests on model or solver self-report. Starting from a
+generic greedy solver, our campaign improved $C(32,8,4)$ from 1{,}258
+to 977 blocks and then stalled: across 75 iterations and three
+configurations, including full rewrites by the flagship model with
+reasoning disabled, no mutation left the plateau. With extended
+reasoning enabled --- and nothing else changed --- the same model broke
+the plateau in its first improving iteration by writing a
+\emph{general} affine-geometry construction, matching the best-known
+value of 620 blocks, unimproved since 1996. A controlled repetition
+from the frozen plateau state separates the arms categorically:
+reasoning-on 3/3 breakthroughs, each independently reaching exactly
+620; reasoning-off 0/3 (one-sided $p = 0.05$; effect $-36\%$). Under
+a pre-registered 29-cell benchmark the single evolved program matched
+22 best-known values --- including four in cells where its discovered
+construction is inapplicable --- with every tie re-verified by an
+independent verifier and high cross-seed stability (25/29 identical
+triples). Direct-recall probes show the model can neither state the
+target value nor emit the artifact without writing code, dissociating
+memorization from the reasoning-to-code pathway. We release all
+certificates, frozen protocols, raw logs, and negative results.
 \end{abstract}
 
 \begin{CCSXML}
-% TODO: ACM CCS kavramlari (Computing methodologies ~ Genetic
-% programming; Search methodologies; Mathematics of computing ~
-% Combinatorics)
+<ccs2012>
+<concept>
+<concept_id>10010147.10010178.10010205.10010208</concept_id>
+<concept_desc>Computing methodologies~Genetic programming</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10010147.10010178.10010219</concept_id>
+<concept_desc>Computing methodologies~Natural language generation</concept_desc>
+<concept_significance>300</concept_significance>
+</concept>
+<concept>
+<concept_id>10002950.10003624.10003633</concept_id>
+<concept_desc>Mathematics of computing~Combinatorics</concept_desc>
+<concept_significance>300</concept_significance>
+</concept>
+</ccs2012>
 \end{CCSXML}
+\ccsdesc[500]{Computing methodologies~Genetic programming}
+\ccsdesc[300]{Computing methodologies~Natural language generation}
+\ccsdesc[300]{Mathematics of computing~Combinatorics}
 
 \keywords{LLM-driven evolution, program search, covering designs,
 extended reasoning, exact verification, FunSearch, AlphaEvolve}
@@ -35,23 +81,43 @@ extended reasoning, exact verification, FunSearch, AlphaEvolve}
 \begin{document}
 \maketitle
 
-% Her bolum icin: pandoc ciktisi sections/NN.tex olarak kaydedilip
-% \input edilir. Tablolar (T1: §6, T2: §7, T3: §8) booktabs'a,
-% F2 figures/f2-campaign-timeline.pdf olarak \includegraphics'e,
-% F3 listings ortamina (figures/f3-affine-blocks-listing.py),
-% F1 mermaid kaynagi (figures/f1-architecture.mmd) TikZ'e cevrilir.
-\section{Introduction}          % 01-introduction.md
-\section{Related Work}          % 02-related-work.md
-\section{The Discovery Harness} % 03-harness.md
-\section{Case Study Instrument: Covering Designs} % 04-...
-\section{The Evolution Campaign}                  % 05-...
-\section{Controlled Experiment: Reasoning Mode}   % 06-...
-\section{Pre-registered Benchmark and Generalization} % 07-...
-\section{Contamination Analysis}                  % 08-...
-\section{Limitations and Threats to Validity}     % 09-...
-\section{Conclusion}                              % 10-...
+\input{sections/01-intro}
+\input{sections/02-related}
+\input{sections/03-harness}
+\input{sections/04-instrument}
+\input{sections/05-campaign}
+\input{sections/06-experiment}
+\input{sections/07-benchmark}
+\input{sections/08-contamination}
+\input{sections/09-limitations}
+\input{sections/10-conclusion}
 
-% Acknowledgements + artifacts: 11-backmatter.md
+\section*{Reproducibility and Artifacts}
+All code, certificates, frozen protocols, and raw logs are released
+at \url{https://github.com/keremt-dev/discovery-harness}: the
+problem-agnostic harness and covering plugin (MIT license), solution
+certificates with a standalone stdlib verifier (CC-BY 4.0), the
+pre-registered benchmark protocol with its results table, the
+controlled-experiment slice logs, and the contamination probe
+transcripts. Every tie claimed in this paper can be re-verified in
+minutes with \texttt{python verify\_cover.py v k t solution.txt},
+which shares no code with the harness. The evolution runs used
+OpenEvolve 0.3.2 \cite{openevolve} with configuration files included
+in the repository; model access went through a local
+OpenAI-compatible proxy, and we document the serving-stack behaviors
+(reasoning-mode payload overrides, ensemble-seeding pathology) that
+affect reproduction.
+
+\begin{acks}
+The problem-selection methodology of the broader discovery programme
+behind this paper was motivated by the published work of G.~Yazg{\i}
+T\"ut\"unc\"u and Cihangir \"Ozkut on reliability design
+optimization; we thank them for that inspiration. We also thank Dan
+Gordon for three decades of curation of the covering repository,
+without which the stagnant-frontier experimental setting of this
+paper would not exist.
+\end{acks}
+
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{references}
 \end{document}

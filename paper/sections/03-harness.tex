@@ -1,0 +1,119 @@
+\section{The Discovery Harness}\label{sec:harness}
+
+Our harness descends from the FunSearch/AlphaEvolve template --- an
+LLM proposes program mutations, an evaluator scores them, an
+evolutionary database (MAP-Elites over islands; we use OpenEvolve
+\cite{openevolve}) maintains the population --- but its design center
+is different: \emph{every scored value is recomputed by a
+mathematically exact instrument, and nothing the evolved program says
+about itself is trusted} (Figure~\ref{fig:architecture}). This
+section describes the contract that enforces this, and the design
+decisions that were each paid for by a concrete failure earlier in
+the project.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[
+  node distance=8mm and 12mm,
+  box/.style={draw, rounded corners, align=center, font=\scriptsize,
+              inner sep=4pt},
+  arr/.style={-{Stealth}, thick}]
+\node[box] (ps)  {Prompt sampler\\ + artifacts feedback\\
+                  \emph{(leak-audited: no archive values)}};
+\node[box, right=of ps] (ens) {LLM tier\\ engine 0.8 / flagship 0.2\\
+                  \emph{reasoning ON only at plateaus}};
+\node[box, below=of ens] (run) {Runner: subprocess, tempdir,\\
+                  wall-clock kill, partial rescue\\
+                  \texttt{--seed 0} / \texttt{--seed 1}};
+\node[box, below=of ps] (plg) {Problem plugin\\ exact recount from
+                  raw instance\\ fitness $\neq$ cost, penalty scale};
+\node[box, left=of plg] (db) {MAP-Elites DB\\ 4 islands,\\ checkpoints};
+\node[box, below=of plg] (arc) {Archive hook\\ content-hashed, durable};
+\draw[arr] (ps) -- (ens);
+\draw[arr] (ens) -- node[right, font=\tiny]{mutated program} (run);
+\draw[arr] (run) -- node[above, font=\tiny]{solution text} (plg);
+\draw[arr] (plg) -- node[above, font=\tiny]{mean score} (db);
+\draw[arr] (db) |- (ps);
+\draw[arr, dashed] (plg) -- node[right, font=\tiny]{feasible, below
+                  threshold} (arc);
+\draw[arr, dashed] (plg) -- node[left, font=\tiny]{violations, stderr}
+                  (ps);
+\end{tikzpicture}
+\caption{The harness. The exactness boundary (bottom) recomputes all
+scores from raw instances; solver self-reports never cross it.}
+\label{fig:architecture}
+\end{figure}
+
+\subsection{Problem plugins and the exactness contract}
+
+The core never mentions any concrete problem. A problem is a plugin
+exposing four members: a \texttt{SENSE} flag (min/max), a strict
+instance parser, an evaluator mapping solution text to a verdict, and
+a penalty scale derived from the instance. Two asymmetric error
+policies apply: a malformed \emph{instance} raises immediately
+(instrument fault --- the loop must halt), while a malformed
+\emph{solution} never raises --- it produces a graded, penalized
+verdict, because candidate programs will emit garbage and the loop
+must keep moving. The verdict separates \emph{fitness} (penalized,
+for evolution) from \emph{cost} (the claim-bearing objective, defined
+only for feasible solutions); conflating the two is a classic
+reward-hacking door and is structurally closed here. The sign
+convention between \texttt{SENSE} and the maximizing evolution engine
+is applied in exactly one function --- an inverted sign silently
+reverses evolution, so this conversion is the most heavily
+unit-tested line of the codebase.
+
+Evolved programs run in a separate process with a temporary working
+directory and a wall-clock kill; whatever partial output exists at
+timeout is rescued and graded (all our solvers are anytime by
+contract). The evaluator recounts everything from the raw instance
+with exact arithmetic --- exact rational arithmetic for the
+reliability case study, exact integer counting for covering. A
+solver's self-reported objective is ignored, but \emph{whether it
+matches} the recount is logged as a silent honesty sensor. Penalty
+scales are derived from instance data such that no constraint
+violation can ever be profitable; the test suite asserts the
+invariant ``every infeasible verdict scores strictly below every
+feasible one'' per plugin.
+
+\subsection{Multi-seed fitness and the determinism contract}
+
+Two additions were forced by a painful incident. In an earlier
+record-hunting run on $C(28,9,3)$, a 56-block solution was observed
+once by the evaluator, was not persisted, and could not be reproduced
+afterwards: the genome derived internal phase budgets from wall-clock
+fractions, so even fixed-seed reruns diverged under machine-load
+variation (measured same-seed spread on that genome: 63--73 blocks).
+The episode produced three mechanisms. First, \emph{solution
+archiving}: an environment-gated hook persists every feasible
+solution passing a cost threshold to durable storage under a
+content-hashed filename (idempotent under parallel evaluation, never
+able to raise into the evaluation path). Second, \emph{multi-seed
+fitness}: the adapter can run a candidate once per seed in a declared
+list, passing \texttt{--seed N} on the CLI; the evolutionary fitness
+is the \emph{mean} of combined scores over seeds, the reported cost
+is the best run's. A program that is only occasionally lucky is
+thereby scored as such --- fitness measures the program, not one
+machine-moment. Third, a \emph{determinism contract} in the mutation
+prompt: internal phase budgets must be derived from work counters
+(iterations, node counts), never from wall-clock fractions, with
+wall-clock permitted only as the final hard stop.
+Section~\ref{sec:benchmark}'s seed-stability result (identical costs
+across three seeds in 25 of 29 cells) is the empirical yield of this
+contract.
+
+\subsection{Problem-agnosticism as a tested property}
+
+The harness's generality is not aspirational but regression-tested:
+after the initial reliability-design case study (weighted
+$k$-out-of-$n$ systems, where small instances have \emph{provably}
+optimal solutions via exhaustive enumeration, giving the evaluator
+itself a measurable accuracy), a cap-set plugin (the FunSearch
+precedent problem) and the covering-design plugin of this paper were
+each added with zero changes to the core --- the project treats any
+needed core edit as a leak to be fixed, not accommodated. We disclose
+one accepted limitation: on the Windows host used for these
+experiments, the candidate subprocess is not OS-sandboxed (no
+network/memory isolation enforcement); the risk is accepted for a
+single-user machine and the setup is portable to containerized
+execution.

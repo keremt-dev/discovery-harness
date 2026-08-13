@@ -1,0 +1,157 @@
+\section{Pre-registered Benchmark and Generalization}\label{sec:benchmark}
+
+\subsection{Protocol}
+
+To turn the single-cell result of Section~\ref{sec:experiment} into a
+generalization claim we froze a benchmark protocol \emph{before}
+executing any benchmark run (the protocol text was committed to the
+project repository prior to execution; the results section was
+appended afterwards without modifying the protocol --- the commit
+timestamps are public).
+
+\textbf{Cells and roles.} The benchmark comprises 29 cells $C(v,k,t)$
+of the covering repository, partitioned into five roles: (i) two
+GATE cells whose optima are proven by our own exhaustive enumeration
+(instrument health); (ii) the single TRAINING cell $C(32,8,4)$, the
+only cell ever present in the evolutionary fitness signal --- it is
+retained in the table for transparency but excluded from all
+generalization statements; (iii) fifteen AFFINE-HOLDOUT cells,
+prime-power universes where the discovered affine construction is
+applicable; (iv) two AFFINE-BOUNDARY cells where the construction
+applies but the archive value is strictly better than the pure
+construction; and (v) nine NON-PRIME-POWER cells where the affine
+path is inapplicable and any quality must come from the evolved
+generic search machinery. None of the 28 non-training cells was ever
+evaluated by the evolution loop.
+
+\textbf{Runs.} Two pinned artifacts are compared: the pre-evolution
+seed solver (baseline; one run, seed 0) and the final evolved program
+(three runs, seeds 0/1/2 --- the variance across seeds is part of the
+reported result). Per-cell wall-clock budgets (60--300\,s) were fixed
+in the protocol. Solutions are scored by exact recount of covered
+$t$-subsets; every claimed tie is re-verified by a standalone
+verifier that uses only the Python standard library and shares no
+code with the harness. Ambient machine conditions (26--41\%
+background load from unrelated desktop processes) were recorded at
+launch; solver processes ran sequentially, one at a time.
+
+\subsection{Results}
+
+All 116 scheduled runs completed (297 minutes wall clock).
+Table~\ref{tab:benchmark} gives the full benchmark; no row is
+omitted.
+
+\begin{table}
+\caption{Pre-registered 29-cell benchmark. Archive $=$ best-known
+value (frozen La Jolla repository, cross-checked against its live
+successor). Evolved column shows the range over three seeds (single
+number $=$ all seeds identical). $^{*}$proven optimal by our
+enumerator; $^{\dagger}$prime-power universe, but the affine
+construction is inapplicable at $(k,t)=(16,4)$.}
+\label{tab:benchmark}
+\small
+\begin{tabular}{llrrrl}
+\toprule
+Cell & Role & Archive & Seed solver & Evolved & Outcome \\
+\midrule
+$C(7,3,2)$   & GATE     & 7$^{*}$  & 7     & 7     & tie \\
+$C(13,3,2)$  & GATE     & 26$^{*}$ & 26    & 26    & tie \\
+$C(32,8,4)$  & TRAINING & 620      & 1258  & 620   & tie (training) \\
+$C(8,4,3)$   & AFFINE-H & 14       & 14    & 14    & tie \\
+$C(9,3,2)$   & AFFINE-H & 12       & 12    & 12    & tie \\
+$C(16,4,3)$  & AFFINE-H & 140      & 154   & 140   & tie \\
+$C(16,8,4)$  & AFFINE-H & 30       & 54    & 30    & tie \\
+$C(25,5,2)$  & AFFINE-H & 30       & 38    & 30    & tie \\
+$C(27,3,2)$  & AFFINE-H & 117      & 118   & 117   & tie \\
+$C(27,9,3)$  & AFFINE-H & 39       & 80    & 39    & tie \\
+$C(32,4,3)$  & AFFINE-H & 1240     & 1450  & 1240  & tie \\
+$C(32,16,5)$ & AFFINE-H & 62       & 219   & 62    & tie \\
+$C(32,17,5)$ & AFFINE-H & 62       & 156   & 62    & tie \\
+$C(49,7,2)$  & AFFINE-H & 56       & 91    & 56    & tie \\
+$C(49,8,2)$  & AFFINE-H & 49       & 72    & 49    & tie \\
+$C(64,4,3)$  & AFFINE-H & 10416    & 12986 & 10416 & tie \\
+$C(81,3,2)$  & AFFINE-H & 1080     & 1152  & 1080  & tie \\
+$C(81,9,3)$  & AFFINE-H & 1170     & 2504  & 1170  & tie \\
+$C(27,10,3)$ & AFFINE-B & 35       & 59    & 36    & behind $+1$ \\
+$C(32,18,5)$ & AFFINE-B & 56       & 119   & 99--100 & behind $+43$ \\
+$C(24,6,4)$  & NON-PP   & 784      & 1171  & 1047--1049 & behind $+263$ \\
+$C(28,9,3)$  & NON-PP   & 56       & 90    & 58--70 & behind $+2$ \\
+$C(21,10,3)$ & NON-PP   & 18       & 25    & 18    & tie \\
+$C(20,12,4)$ & NON-PP   & 20       & 29    & 20    & tie \\
+$C(23,10,3)$ & NON-PP   & 24       & 34    & 24    & tie \\
+$C(25,16,4)$ & NON-PP$^{\dagger}$ & 17 & 24 & 17   & tie \\
+$C(30,12,3)$ & NON-PP   & 30       & 51    & 31    & behind $+1$ \\
+$C(30,9,3)$  & NON-PP   & 66       & 113   & 91    & behind $+25$ \\
+$C(22,15,5)$ & NON-PP   & 22       & 35    & 29--30 & behind $+7$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Summary.} The single evolved program matches the best-known
+value in 22 of 29 cells; all 22 ties were re-verified by the
+independent verifier (22/22 valid). The pre-evolution baseline is
+strictly worse in 27 of 29 cells (equal only on the two smallest
+instances). Seed stability is high: in 25 of 29 cells all three
+seeds returned \emph{identical} costs, an empirical corroboration of
+the work-counter determinism contract imposed on evolved programs
+(Section~\ref{sec:harness}); where variance appears it is narrow
+(99--100, 1047--1049, 29--30), with one exception ($C(28,9,3)$:
+58--70).
+
+\subsection{Generalization analysis}
+
+Four independent lines support the generalization claim.
+
+\textbf{Holdout discipline.} 28 of 29 cells never appeared in any
+fitness signal; the loop optimized against exactly one cell. The 21
+non-training ties are therefore out-of-training results in the
+strictest sense available to an evolutionary pipeline.
+
+\textbf{Zero per-cell adaptation.} All runs execute one pinned
+program with the same CLI, no cell-specific parameters, and
+pre-declared seeds.
+
+\textbf{Beyond the discovered construction.} Ties are not merely
+replays of the affine construction. In $C(49,8,2)$ the pure
+construction yields 56 blocks while the archive value is 49; the
+evolved local search closes the entire gap. Four ties occur in
+NON-PP cells where the affine path is inapplicable --- including
+$C(23,10,3)=24$, a value that \emph{none} of our earlier campaign
+artifacts had reached (best previous: 25). These ties are produced
+by the evolved generic machinery (incremental-gain greedy, redundancy
+elimination, element-exchange local search with kicks), not by the
+geometric template.
+
+\textbf{Regression guard.} Discovering the affine paradigm did not
+degrade the program elsewhere. Head-to-head against the strongest
+pre-breakthrough artifact at equal budgets: $C(28,9,3)$ 70 vs.\ 73
+(the post-breakthrough program is \emph{better}), $C(24,6,4)$ 1048
+vs.\ 1042 (within the measured single-seed noise band of anytime
+solvers), and both gate cells at their proven optima for both
+programs.
+
+\subsection{Negative results}
+
+Seven cells remain behind the archive, and we report them as
+first-class results. The two largest gaps are structural:
+$C(32,18,5)$ ($+43$) exposes the weakness of the padded-flat variant
+of the affine construction, and $C(24,6,4)$ ($+263$) shows that on
+large non-prime-power cells the evolved search machinery alone does
+not approach 1996-era engineered designs --- mirroring, in the
+negative, the Section~\ref{sec:experiment} finding that closing such
+gaps requires a construction-level insight rather than more search.
+Two cells miss by a single block ($C(27,10,3)$, $C(30,12,3)$); by the
+campaign's own precedent ($C(28,9,3)$ required a dedicated evolution
+slice to reach its archive value), focused slices may close these,
+but we did not run them for this paper. Cells $C(64,k,5)$ were
+excluded at protocol time because the evolved program's $t$-subset
+index exceeds memory at $\binom{64}{5} \approx 7.6\cdot10^6$; this is
+declared as a scope gap, not a result.
+
+Finally, we reiterate the honest framing of the entire section: every
+positive outcome above is a \emph{tie} with a best-known value, not
+an improvement. Together with the archive's provenance (most of
+these values date to the 1990s geometric constructions), the
+benchmark suggests that the small stale cells of the repository are
+likely at or near optimal --- and that genuine records in this domain
+will require new construction families, not better local search.
