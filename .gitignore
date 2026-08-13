@@ -26,3 +26,6 @@ paper/*.out
 paper/*.cut
 paper/build*.log
 paper/page*.png
+
+# Kendi makale PDF'imiz istisna (repo-geneli *.pdf kurali telifli indirmeler icindi)
+!paper/main.pdf
