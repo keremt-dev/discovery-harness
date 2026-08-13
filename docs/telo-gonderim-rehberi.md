@@ -93,3 +93,16 @@ e-posta main.tex'te 3kerem@gmail.com; PDF derlemesi temiz (15 sayfa,
   prova aşamasında).
 - `openevolve` için tercih edilen atıf biçimi (repo README'sinde
   "cite as" var mı bak).
+
+
+## GÖNDERİLDİ ✅ (2026-08-13)
+- **Manuscript ID: TELO-2026-65**; başlık ve tek yazar (Turkyilmaz,
+  Kerem — Independent Researcher) onay ekranında doğrulandı.
+- Gönderilen ana belge: `paper/telo-anon-review.pdf` (çift-anonim).
+- Reproducibility rozet başvurusu: Artifacts Available + Evaluated
+  (Functional); DOI alanı anonimlik için boş (revizyonda doldurulacak:
+  10.5281/zenodo.21920942).
+- Beklenen: onay e-postası (3kerem@gmail.com); ilk karar tipik 2-4 ay.
+- Paralel açık iş: arXiv endorsement (kod 79GNDU e-postada; taslak:
+  outreach/endorsement-rica-taslagi.md). Endorsement gelince arXiv
+  ön-baskısı yüklenir ve revizyonda makaleye işlenir.
