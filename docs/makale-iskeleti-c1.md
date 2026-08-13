@@ -155,9 +155,17 @@ Kaynak: benchmark §4, CLAUDE.md dersleri.
 - Venue: **doğrudan TELO** (GECCO kollanmayacak); arXiv ön-baskı
   gönderimle eş zamanlı.
 
-## Yazım durumu
-- §6 TAM TASLAK: `paper/06-reasoning-experiment.md` (2026-08-13) —
-  Tablo 1 log-hassas verilerle (kırılma iterasyonları 8/4/3;
-  off-r1 jitter +0.0003/978; off-r3 kota olayı şeffaf dipnot).
-- §7 TAM TASLAK: `paper/07-benchmark-generalization.md` (2026-08-13) —
-  Tablo 2 (29 satır), dört-ayaklı genelleme, negatifler bölümü.
+## Yazım durumu — TÜM BÖLÜMLER TASLAK TAMAM (2026-08-13)
+- §1+Abstract: `paper/01-introduction.md` (katkılar C1-C4, yol haritası)
+- §2: `paper/02-related-work.md` — §3: `paper/03-harness.md` —
+  §4: `paper/04-covering-instrument.md` — §5: `paper/05-campaign.md` —
+  §6: `paper/06-reasoning-experiment.md` (Tablo 1 log-hassas) —
+  §7: `paper/07-benchmark-generalization.md` (Tablo 2, 29 satır) —
+  §8: `paper/08-contamination.md` (Tablo 3) —
+  §9: `paper/09-limitations.md` — §10: `paper/10-conclusion.md`
+- KALAN (bütünleştirme aşaması): tek dosyada birleştirme; F1 (mimari),
+  F2 (kampanya zaman çizelgesi), F3 (affine_blocks kod listesi)
+  figürlerinin üretimi; atıf placeholder'larının BibTeX'e dökülmesi;
+  TELO LaTeX şablonuna geçiş; gönderim öncesi literatür tazeleme
+  (B3 notu); repo open-source hazırlığı (lisans: MIT kod + CC-BY veri
+  önerisi); acknowledgement metni (Tütüncü/Özkut).
