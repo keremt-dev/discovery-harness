@@ -875,7 +875,7 @@ stagnant-frontier experimental setting of this paper would not exist.
 # Reproducibility and Artifacts
 
 All code, certificates, frozen protocols, and raw logs are released
-at [REPO-URL]: the problem-agnostic harness and covering plugin (MIT
+at https://github.com/keremt-dev/discovery-harness: the problem-agnostic harness and covering plugin (MIT
 license), solution certificates with a standalone stdlib verifier
 (CC-BY 4.0), the pre-registered benchmark protocol with its results
 table, the controlled-experiment slice logs, and the contamination
