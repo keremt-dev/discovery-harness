@@ -1,0 +1,21 @@
+%% F1 — Harness mimarisi (mermaid kaynağı; LaTeX için TikZ'e çevrilecek)
+flowchart LR
+    subgraph LLM["LLM tier"]
+        ENS["Weighted ensemble<br/>engine 0.8 / flagship 0.2<br/>(reasoning ON only at plateaus)"]
+    end
+    subgraph EVO["Evolution engine (OpenEvolve)"]
+        DB["MAP-Elites DB<br/>4 islands, checkpoints"]
+        PS["Prompt sampler<br/>+ artifacts feedback<br/>(leak-audited: no archive values)"]
+    end
+    subgraph EVAL["Exactness boundary"]
+        RUN["Runner<br/>subprocess, tempdir cwd,<br/>wall-clock kill, partial rescue<br/>--seed 0 / --seed 1"]
+        PLG["Problem plugin<br/>exact recount from raw instance<br/>fitness ≠ cost, penalty scale"]
+        ARC["Archive hook<br/>content-hashed, durable"]
+    end
+    PS --> ENS
+    ENS -->|"mutated program"| RUN
+    RUN -->|"solution text (per seed)"| PLG
+    PLG -->|"mean combined score"| DB
+    PLG -.->|"feasible & below threshold"| ARC
+    DB --> PS
+    PLG -.->|"violations, stderr"| PS

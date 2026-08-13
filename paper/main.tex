@@ -1,0 +1,57 @@
+%% C1 — TELO gonderi iskeleti (acmart). Govde donusumu icin:
+%%   choco install pandoc
+%%   pandoc -f gfm -t latex paper/NN-*.md  (bolum bolum; tablolar elden gecirilir)
+\documentclass[acmsmall,screen,review]{acmart}
+
+\acmJournal{TELO}
+\acmVolume{0}\acmNumber{0}\acmArticle{0}\acmMonth{0}
+
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily\footnotesize, language=Python,
+        breaklines=true, frame=single}
+
+\title{Reasoning Mode Breaks the Plateau: Verified LLM-Evolutionary
+       Search Matches Three Decades of Best-Known Covering Designs}
+
+\author{Kerem T\"urky{\i}lmaz}
+\affiliation{\institution{Independent Researcher}\country{T\"urkiye}}
+\email{TODO@example.org} % TODO: yayin icin e-posta tercihi
+
+\begin{abstract}
+% Kaynak: paper/01-introduction.md "Abstract (final)" blogu —
+% birebir aktarilacak (pandoc ya da elle).
+TODO: abstract buraya.
+\end{abstract}
+
+\begin{CCSXML}
+% TODO: ACM CCS kavramlari (Computing methodologies ~ Genetic
+% programming; Search methodologies; Mathematics of computing ~
+% Combinatorics)
+\end{CCSXML}
+
+\keywords{LLM-driven evolution, program search, covering designs,
+extended reasoning, exact verification, FunSearch, AlphaEvolve}
+
+\begin{document}
+\maketitle
+
+% Her bolum icin: pandoc ciktisi sections/NN.tex olarak kaydedilip
+% \input edilir. Tablolar (T1: §6, T2: §7, T3: §8) booktabs'a,
+% F2 figures/f2-campaign-timeline.pdf olarak \includegraphics'e,
+% F3 listings ortamina (figures/f3-affine-blocks-listing.py),
+% F1 mermaid kaynagi (figures/f1-architecture.mmd) TikZ'e cevrilir.
+\section{Introduction}          % 01-introduction.md
+\section{Related Work}          % 02-related-work.md
+\section{The Discovery Harness} % 03-harness.md
+\section{Case Study Instrument: Covering Designs} % 04-...
+\section{The Evolution Campaign}                  % 05-...
+\section{Controlled Experiment: Reasoning Mode}   % 06-...
+\section{Pre-registered Benchmark and Generalization} % 07-...
+\section{Contamination Analysis}                  % 08-...
+\section{Limitations and Threats to Validity}     % 09-...
+\section{Conclusion}                              % 10-...
+
+% Acknowledgements + artifacts: 11-backmatter.md
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
+\end{document}
