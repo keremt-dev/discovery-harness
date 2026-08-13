@@ -70,7 +70,7 @@ ayrımı, çözüm arşivleme kancası, çok-seed ortalamalı fitness.
 |---|---|---|---|
 | ~~B1~~ | ~~Thinking etkisi n=1~~ **KAPANDI (2026-08-12→13):** ON 3/3 (üçü de 620) vs OFF 0/3, Fisher tek-yönlü **p=0.05**, etki −357 blok/%36; destekleyici r0 (4/4, p≈0.029) + tarihsel OFF 0/25. A3'e taşındı. | — | — |
 | ~~B2~~ | ~~Covering benchmark dokümanı~~ **KAPANDI (2026-08-13):** `docs/benchmark-covering.md` — dondurulmuş protokol, 29 hücre × 3 seed, 22/29 eşitleme (22/22 bağımsız doğrulama), C(23,10,3)=24 yeni, PP-DIŞI 4 eşitleme (genelleme afin dışına taştı), negatifler dahil. | — | — |
-| B3 | Sistematik literatür taraması | "LLM-evrim × covering design emsali yok" şu an ön-tarama | FunSearch/AlphaEvolve türevleri + JCD/tasarım literatürü; 1 oturum |
+| ~~B3~~ | ~~Sistematik literatür taraması~~ **KAPANDI (2026-08-13):** `docs/literatur-taramasi-b3.md` — covering×LLM emsali YOK (AlphaEvolve/Nagda/Shinka/CodeEvolve listeleri tarandı); evrimsel döngüde thinking ablasyonu YOK (başka alanlarda karışık sonuçlu); rediscovery raporlama emsalli (AlphaEvolve %75). Gönderim öncesi tek tur tazeleme şart. | — | — |
 | B4 | Kontaminasyon tartışması | Hakem "model 620'yi biliyordu" der | Kodda değer-yokluğu muayenesi (yapıldı) + C(49,8,2) arama kanıtı + aile-transferi; yazıma dönüştürülecek |
 | B5 | kofn uzman teması | İddia planı §6.4; errata açılış kozu | `docs/ozkut-eposta-bilgi-notu.md` hazır; gönderim kullanıcı onayına bağlı |
 | B6 | Capset (P4) bilançosu | Agnostiklik kanıtının üçüncü ayağı dağınık | Koşu kayıtlarından tek sayfalık özet; yarım oturum |
