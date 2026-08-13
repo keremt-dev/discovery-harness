@@ -16,3 +16,13 @@ docs/ozkut-eposta-bilgi-notu.md
 # Copyrighted papers / downloaded sources (see data/*/reference/README.md for provenance)
 *.pdf
 data/*/reference/sources/
+
+# LaTeX derleme artiklari
+paper/*.aux
+paper/*.log
+paper/*.blg
+paper/*.bbl
+paper/*.out
+paper/*.cut
+paper/build*.log
+paper/page*.png
