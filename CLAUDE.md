@@ -717,6 +717,19 @@ edilen risk; Docker'lı koşuma taşınabilir. Raporda not edilir.
       (sabit set, asal-kuvvet dışı hücreler dahil, sakin-makine
       çok-seed protokol, tohum/arşiv kolonları). Ham veri:
       runs\evolve\regresyon-20260811\results.csv.
+      **B1 THINKING TEKRAR DENEYİ (2026-08-12→13, yayın özeti B1):**
+      tasarım: checkpoint_75'ten, ON (8320/64k/900) vs OFF (8317/20k,
+      dilim-3 config'i), k=3 tekrar × 10 iter, dönüşümlü sıra, seed
+      43/44/45 eşleştirilmiş, hepsi Opus full-rewrite. SONUÇ:
+      **ON 3/3 KIRILMA — üçü de tam 620'ye ulaştı** (afin konstrüksiyon
+      her tekrarda yeniden keşfedildi); OFF r1 978 (skor kıpırtısı,
+      kırılma değil), r2 977 (hiç yeni-en-iyi), **r3 GEÇERSİZ: Claude
+      kota 429'ları (48 hata, 2/10 iter)** — o dilim koşulamadı.
+      Orijinallerle birlikte: ON 4/4 (r0 dahil), OFF 0/2 geçerli dilim
+      (+checkpoint_50'de tarihsel 0/25). off-r3 yeniden-koşumu HAZIR:
+      `runs\evolve\b1\off-r3b-komut.ps1` (kota yenilenince tek komut;
+      0 çıkarsa ON 3/3 vs OFF 0/3 → Fisher tek-yönlü p=0.05). Ham
+      loglar: runs\evolve\b1\*.log.
 - [ ] **Faz G — P3 (HFFVRP-B).** cvrp-discovery evaluator'ünü KOPYALA,
       heterojen filo (tip başına kapasite + sabit maliyet) ve backhaul
       öncelik kısıtını ekle. ⚠ **Yuvarlama sözleşmesi DOĞRULANACAK**:
