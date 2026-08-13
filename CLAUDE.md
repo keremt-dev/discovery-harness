@@ -736,6 +736,18 @@ edilen risk; Docker'lı koşuma taşınabilir. Raporda not edilir.
       NOT (pwsh tuzağı): retry script'i Windows PowerShell 5.1 ile
       koşturulamaz — EAP=Stop, openevolve'un stderr log satırını
       NativeCommandError'a çevirip koşuyu düşürüyor; pwsh 7 şart.
+      **B2 BENCHMARK TAMAM (2026-08-13, docs/benchmark-covering.md):**
+      protokol koşu ÖNCESİ donduruldu (07e3920); 29 hücre × (thinking620
+      × 3 seed + tohum × 1), 297 dk, 116/116 koşu. SONUÇ: **22/29
+      eşitleme** (22/22 bağımsız doğrulama); seed kararlılığı 25/29
+      hücrede özdeş üçlü. YENİ kazanım: **C(23,10,3)=24** (önceki en
+      iyimiz 25, "kalan av" kapandı) + PP-DIŞI kolda 4 eşitleme
+      (21/20/23/25 evrenleri — afin konstrüksiyonsuz, evrilmiş arama
+      makinesiyle; genelleme afin ailesi dışına taştı). Negatifler
+      dokümanda: C(32,18,5) +43, C(24,6,4) +263, C(30,9,3) +25,
+      C(22,15,5) +7, kıl payı C(27,10,3)/C(30,12,3) +1. Toplam eşitleme
+      bilançosu artık 22 hücre (tek protokol altında). Yayın özeti B2
+      kapandı.
 - [ ] **Faz G — P3 (HFFVRP-B).** cvrp-discovery evaluator'ünü KOPYALA,
       heterojen filo (tip başına kapasite + sabit maliyet) ve backhaul
       öncelik kısıtını ekle. ⚠ **Yuvarlama sözleşmesi DOĞRULANACAK**:
