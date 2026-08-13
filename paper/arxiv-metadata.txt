@@ -1,0 +1,22 @@
+=== arXiv yükleme formuna yapıştırılacaklar ===
+
+TITLE:
+Reasoning Mode Breaks the Plateau: Verified LLM-Evolutionary Search Matches Three Decades of Best-Known Covering Designs
+
+AUTHORS:
+Kerem Turkyilmaz
+
+ABSTRACT (düz metin):
+LLM-driven evolutionary program search has produced striking mathematical constructions, but the literature says little about which model capability does the breakthrough work. We study this question on covering designs C(v,k,t) - a classical construction domain untouched by the FunSearch/AlphaEvolve lineage - using a problem-agnostic evolution harness whose defining property is that every score is recomputed by a mathematically exact verifier and no claim rests on model or solver self-report. Starting from a generic greedy solver, our campaign improved C(32,8,4) from 1,258 to 977 blocks and then stalled: across 75 iterations and three configurations, including full rewrites by the flagship model with reasoning disabled, no mutation left the plateau. With extended reasoning enabled - and nothing else changed - the same model broke the plateau in its first improving iteration by writing a general affine-geometry construction, matching the best-known value of 620 blocks, unimproved since 1996. A controlled repetition from the frozen plateau state separates the arms categorically: reasoning-on 3/3 breakthroughs, each independently reaching exactly 620; reasoning-off 0/3 (one-sided p = 0.05; effect -36%). Under a pre-registered 29-cell benchmark the single evolved program matched 22 best-known values - including four in cells where its discovered construction is inapplicable - with every tie re-verified by an independent verifier and high cross-seed stability (25/29 identical triples). Direct-recall probes show the model can neither state the target value nor emit the artifact without writing code, dissociating memorization from the reasoning-to-code pathway. We release all certificates, frozen protocols, raw logs, and negative results.
+
+PRIMARY CATEGORY: cs.NE (Neural and Evolutionary Computing)
+CROSS-LIST: cs.AI, math.CO
+
+COMMENTS:
+15 pages, 3 figures, 3 tables. Code, certificates, and raw logs: https://github.com/keremt-dev/discovery-harness (archived: doi:10.5281/zenodo.21920942)
+
+LICENSE ÖNERİSİ:
+arXiv non-exclusive license (varsayılan seçenek) — dergi devri için en
+esnek olanı; CC lisansları geri alınamaz, TELO süreci bitmeden gerekmez.
+
+MSC/ACM CLASS (opsiyonel alanlar): boş bırakılabilir.
