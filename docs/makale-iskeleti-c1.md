@@ -147,9 +147,17 @@ Kaynak: benchmark §4, CLAUDE.md dersleri.
 3. §8 (B4 hazır), §2 (B3 hazır), §9.
 4. §1 + Abstract en son.
 
-## Açık kararlar (KULLANICI)
-- Yazar listesi / sıra / affiliasyon (Intellica? bağımsız?).
-- Repo açılması + lisans.
-- Tütüncü/Özkut'a C1'de teşekkür-notu (acknowledgement) verilecek mi
-  (problem seçimi profil taramasından çıktı) — C2 temasından bağımsız.
-- GECCO 2027 deadline'ı kollanacak mı yoksa doğrudan TELO mu.
+## Kararlar (KULLANICI, 2026-08-13)
+- Affiliasyon: **bağımsız** (independent researcher).
+- Repo: **open-source olabilir** — lisans seçimi yazım sırasında
+  (öneri: MIT kod + CC-BY sertifika/veri).
+- Acknowledgement: **evet** — Tütüncü/Özkut'a problem-seçimi teşekkürü.
+- Venue: **doğrudan TELO** (GECCO kollanmayacak); arXiv ön-baskı
+  gönderimle eş zamanlı.
+
+## Yazım durumu
+- §6 TAM TASLAK: `paper/06-reasoning-experiment.md` (2026-08-13) —
+  Tablo 1 log-hassas verilerle (kırılma iterasyonları 8/4/3;
+  off-r1 jitter +0.0003/978; off-r3 kota olayı şeffaf dipnot).
+- §7 TAM TASLAK: `paper/07-benchmark-generalization.md` (2026-08-13) —
+  Tablo 2 (29 satır), dört-ayaklı genelleme, negatifler bölümü.
