@@ -725,11 +725,17 @@ edilen risk; Docker'lı koşuma taşınabilir. Raporda not edilir.
       her tekrarda yeniden keşfedildi); OFF r1 978 (skor kıpırtısı,
       kırılma değil), r2 977 (hiç yeni-en-iyi), **r3 GEÇERSİZ: Claude
       kota 429'ları (48 hata, 2/10 iter)** — o dilim koşulamadı.
-      Orijinallerle birlikte: ON 4/4 (r0 dahil), OFF 0/2 geçerli dilim
-      (+checkpoint_50'de tarihsel 0/25). off-r3 yeniden-koşumu HAZIR:
-      `runs\evolve\b1\off-r3b-komut.ps1` (kota yenilenince tek komut;
-      0 çıkarsa ON 3/3 vs OFF 0/3 → Fisher tek-yönlü p=0.05). Ham
-      loglar: runs\evolve\b1\*.log.
+      **off-r3b TAMAM (2026-08-13, kota yenilenince):** 10/10 iter,
+      kırılma yok (977 bandı) → **NİHAİ: ON 3/3 (üçü de 620) vs OFF
+      0/3; Fisher tek-yönlü p = 0.05**; etki büyüklüğü her başarıda
+      −357 blok (%36). Destekleyici: orijinal r0 ON=620 (dahil edilirse
+      4/4 vs 0/3, p≈0.029) + checkpoint_50'de tarihsel OFF 0/25.
+      Yorum: kırılma şans değil — thinking, afin paradigmasını
+      TEKRARLANABİLİR şekilde kuruyor. C1 makalesinin başlık deneyi
+      istatistiksel olarak yerinde. Ham loglar: runs\evolve\b1\*.log.
+      NOT (pwsh tuzağı): retry script'i Windows PowerShell 5.1 ile
+      koşturulamaz — EAP=Stop, openevolve'un stderr log satırını
+      NativeCommandError'a çevirip koşuyu düşürüyor; pwsh 7 şart.
 - [ ] **Faz G — P3 (HFFVRP-B).** cvrp-discovery evaluator'ünü KOPYALA,
       heterojen filo (tip başına kapasite + sabit maliyet) ve backhaul
       öncelik kısıtını ekle. ⚠ **Yuvarlama sözleşmesi DOĞRULANACAK**:

@@ -30,12 +30,17 @@ ayrımı, çözüm arşivleme kancası, çok-seed ortalamalı fitness.
   **C(32,8,4)=620** + 15 afin-tarama eşitlemesi (2026-08-11). Tümü
   bağımsız stdlib doğrulayıcıdan geçti; canlı skorbord çaprazı yapıldı.
   Paketler: `data/covering/results/*`.
-- **Başlık bulgusu:** 75 iterasyonluk 977 platosu (50 ansambl + 25
-  thinking-KAPALI Opus full-rewrite, çocuklar 977-980'e sıkı kümeli),
-  thinking-AÇIK Opus'un İLK iterasyonunda kırıldı: genel afin-geometri
-  konstrüksiyonu (`affine_blocks`, hardcode yok, her v=p^m için
-  türetiliyor) → 620. Aynı model, aynı prompt, aynı checkpoint;
-  değişen tek şey thinking. (Sınır: n=1 gözlem — bkz. B1.)
+- **Başlık bulgusu (B1 deneyiyle İSTATİSTİKLEŞTİ, 2026-08-13):**
+  75 iterasyonluk 977 platosu (50 ansambl + 25 thinking-KAPALI Opus
+  full-rewrite, çocuklar 977-980'e sıkı kümeli), thinking-AÇIK Opus'un
+  İLK iterasyonunda kırıldı: genel afin-geometri konstrüksiyonu
+  (`affine_blocks`, hardcode yok, her v=p^m için türetiliyor) → 620.
+  Aynı model, aynı prompt, aynı checkpoint; değişen tek şey thinking.
+  Kontrollü tekrar (checkpoint_75'ten, k=3/kol, 10 iter/dilim,
+  eşleştirilmiş seed, dönüşümlü sıra): **ON 3/3 kırılma — üçü de
+  bağımsız olarak tam 620; OFF 0/3** (977-1011 bandı). Fisher
+  tek-yönlü p = 0.05; etki −357 blok (%36). Destekleyici: orijinal
+  r0 (dahilse 4/4 vs 0/3, p≈0.029) + tarihsel OFF 0/25 iterasyon.
 - C(49,8,2)=49: saf konstrüksiyon 56 verir; evrilmiş yerel arama
   kapattı → eşitleme ezber değil ARAMA ürünü (kontaminasyon savunması).
 - Genelleme dört ayaklı doğrulandı: holdout (17 tarama hücresi döngü
@@ -63,7 +68,7 @@ ayrımı, çözüm arşivleme kancası, çok-seed ortalamalı fitness.
 
 | # | Eksik | Neden önemli | Kapatma maliyeti |
 |---|---|---|---|
-| B1 | **Thinking etkisi n=1** | Başlık bulgusu tek koşuya dayanıyor; şans olabilir | checkpoint_75'ten k×thinking-açık vs k×kapalı tekrar (farklı LLM seed/temperature); ~2×5 koşu ≈ 1 gün + ~500k-1M token |
+| ~~B1~~ | ~~Thinking etkisi n=1~~ **KAPANDI (2026-08-12→13):** ON 3/3 (üçü de 620) vs OFF 0/3, Fisher tek-yönlü **p=0.05**, etki −357 blok/%36; destekleyici r0 (4/4, p≈0.029) + tarihsel OFF 0/25. A3'e taşındı. | — | — |
 | B2 | Covering benchmark dokümanı | Formal iddia protokolsüz olmaz | Sabit set (asal-kuvvet dışı dahil) + sakin-makine çok-seed re-run + tohum/arşiv kolonları; 1 oturum |
 | B3 | Sistematik literatür taraması | "LLM-evrim × covering design emsali yok" şu an ön-tarama | FunSearch/AlphaEvolve türevleri + JCD/tasarım literatürü; 1 oturum |
 | B4 | Kontaminasyon tartışması | Hakem "model 620'yi biliyordu" der | Kodda değer-yokluğu muayenesi (yapıldı) + C(49,8,2) arama kanıtı + aile-transferi; yazıma dönüştürülecek |
