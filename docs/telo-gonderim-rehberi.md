@@ -8,8 +8,12 @@ e-posta main.tex'te 3kerem@gmail.com; PDF derlemesi temiz (15 sayfa,
 1. **ORCID** (orcid.org): ücretsiz kayıt, 3kerem@gmail.com ile.
    ACM gönderiminde yazar kimliği olarak istenir. Aldığın ORCID iD'yi
    not et (0000-XXXX-... biçiminde).
-2. **ACM Web Account** (account.acm.org): ücretsiz; ACM üyeliği
-   GEREKMEZ. Aynı e-postayla aç.
+2. **ScholarOne hesabı**: gönderim sitesinin kendisinde açılır
+   (Adım 4'teki adres, "Create an Account" — ORCID ile bağlanabilir).
+   Ayrı bir ACM hesabı ŞART DEĞİL; ancak kabul aşamasında (eRights)
+   ücretsiz **ACM Web Account** gerekir: **https://accounts.acm.org**
+   (çoğul "accounts"; üyelik GEREKMEZ — "Professional Membership"
+   formu paralı üyeliktir, onunla İLGİSİ YOK, doldurma).
 3. Zenodo hesabın zaten var (✓).
 
 ## Adım 1 — Kod arşivi + DOI (Zenodo, ~15 dk)
@@ -52,9 +56,12 @@ e-posta main.tex'te 3kerem@gmail.com; PDF derlemesi temiz (15 sayfa,
 3. Zenodo DOI'yi makleye işle (Adım 1.5), yeniden derle, push.
 
 ## Adım 4 — TELO'ya gönderim (ScholarOne, ~45 dk)
-1. **mc.manuscriptcentral.com/telo** adresine git ("ACM Manuscript
-   Central" — TELO'nun gönderim sistemi; guidelines sayfasındaki
-   "Submit" bağlantısı da buraya düşer). ACM/ORCID ile hesap eşle.
+1. **mc.manuscriptcentral.com/telo** adresine git (ScholarOne /
+   "Manuscript Central" — ACM dergilerinin gönderim sistemi). Adres
+   404 verirse doğru bağlantı guidelines sayfasındaki "Submit"
+   düğmesindedir (dl.acm.org/journal/telo/author-guidelines); genel
+   portal mc.manuscriptcentral.com/acm da yönlendirir. "Create an
+   Account" ile hesap aç, ORCID'ini bağla.
 2. "Author" sekmesi → **Start New Submission**. Sırayla istenecekler:
    - **Type**: Research Article.
    - **Title / Abstract**: main.tex'ten kopyala.
