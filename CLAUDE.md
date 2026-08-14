@@ -290,6 +290,23 @@ Bunlar **öğrenilmiş dersler**, yeniden keşfetmek zaman kaybı. Kaynak:
   seviyesinde. Thinking açmak istenirse o blok silinir. Duman testi (5 iter)
   bu configle yeşil: 5/5 geçerli kod, MAP-Elites hücreler doluyor; ilk
   nesiller infeasible (normal), tohum skoru (0.3911) korundu.
+  **GLM-5.3 güncellemesi (2026-08-14):** z.ai, Coding Plan'da glm-5.2
+  isteklerini SESSİZCE glm-5.3'e yönlendirmeye başladı (yanıtta
+  `"model":"glm-5.3"`) ve 5.3'te düşünme ZORUNLU:
+  `thinking:{type:disabled}` artık yok sayılıyor,
+  `enable_thinking:false` açık hata veriyor ("cannot be disabled;
+  please use low, high, or max"). Eski override bu yüzden İŞLEMEZ
+  oldu (GLM yolu fiilen kırılmıştı). Çalışan tek kapatma:
+  **`reasoning_effort: "minimal"`** (empirik: reasoning=0,
+  content dolu, finish=stop; "minimal" hata listesinde yazmasa da
+  kabul ediliyor). `config.glm.yaml` payload.override buna çevrildi
+  (yedekler: `config.glm.yaml.bak-20260814` = 5.3 alias öncesi,
+  `bak2-20260814` = override değişikliği öncesi) + `glm-5.3` alias'ı
+  eklendi (`glm-5` alias'ı provenans için upstream adı glm-5.2'de
+  bırakıldı — zaten 5.3 servis ediliyor). Proxy'den iki alias da
+  doğrulandı: reasoning≈0, content OK. Thinking-AÇIK GLM deneyi
+  istenirse: override'a takılmayan ayrı bir alias + effort
+  low/high/max + büyük max_tokens gerekir (yapılmadı).
 - `prompt.include_artifacts: true` — stderr + violation özeti LLM'e döner;
   "neden kötüydü" bilgisi mutasyon kalitesini artırıyor.
 - `database`: population 200, archive 50, 4 island, elite 0.1 / exploration
