@@ -103,8 +103,21 @@ Durdurma: `ssh kt-uzak "schtasks /End /TN kt-track-a"` — ardından
   ~13:45'te başladı; beklenen bitiş ~00:15. Çıktı:
   `runs/probes/track-a-uzak/` + `ADAY-*` (varsa).
 
-## Faz 2 (yapılMADI — evolve döngüsünü taşımadan önce)
+## Faz 2 (evolve döngüsünü taşımadan önce)
 
-- openevolve 0.3.2 kurulumu + adaptör test faillerinin çözümü.
-- Proxy erişimi: ana makinedeki 8317/8318/8320'ye Tailscale üzerinden
-  (bind adresi + güvenlik duvarı yalnız-Tailscale kuralı gerekir).
+- **Proxy erişimi ÇÖZÜLDÜ (2026-08-14):** üç port da uzaktan uçtan uca
+  doğrulandı — `curl http://100.125.104.107:8317/v1/models` (ve 8318,
+  8320) uzaktan `{"error":"Missing API key"}` dönüyor (= erişim var,
+  anahtar kapısı aktif). Compose zaten 0.0.0.0'a yayınlıyor; ek
+  güvenlik duvarı kuralı gerekmedi. Uzak evolve config'inde api_base
+  `http://100.125.104.107:<port>/v1` olur.
+- ⚠ 8317 o gün ölüydü: reboot sonrası 51821 portu WinNAT hariç-tutma
+  aralığına düşünce Docker konteynerin TÜM forward'larını sessizce
+  kurmamıştı → compose'ta 41821'e taşındı + force-recreate
+  (ayrıntı: ana repo CLAUDE.md §0 "Port tamiri 2026-08-14").
+- ⚠ Claude OAuth refresh invalid_grant — Opus/thinking yolu (8317/8320)
+  kullanılmadan önce kullanıcı `claude-login.ps1` + container restart
+  yapmalı. GLM (8318) API-key'li, hazır.
+- KALAN: openevolve 0.3.2 kurulumu (`py -3.14 -m pip install --user
+  openevolve==0.3.2`), pwsh 7, adaptör test faillerinin çözümü
+  (4 fail), API anahtarının repo-dışı taşınması (env dosyası).

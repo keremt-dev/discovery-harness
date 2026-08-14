@@ -76,6 +76,23 @@ Bu dosya Claude Code'a (claude.ai/code) bu depoda çalışırken rehberlik eder.
    tam kod bloğu, 9k token content. NOT: 8317'yi kullanan diğer
    istemcilerde de claude thinking kapanır — istenirse blok silinip
    restart atılır.
+   **Port tamiri (2026-08-14):** reboot sonrası host portu 51821,
+   WinNAT hariç-tutma aralığına düştü (54545 vakasının aynısı) ve
+   Docker konteynerin TÜM port forward'larını sessizce kurmadı —
+   belirti: 8317 "connection refused" ama konteyner içi loglar
+   sağlıklı; teşhis: `netstat`'ta 8317 dinleyicisi yok +
+   `netsh int ipv4 show excludedportrange`. Düzeltme: compose'ta
+   51821→41821 (yedek: `docker-compose.yml.bak-20260814`) +
+   force-recreate. İKİ yan etki: (a) recreate `:latest` çekti (imaj
+   2026-08-14) — claude yoluna güvenmeden önce §0'daki replika-istek
+   kontrolünü tekrarla; (b) Claude OAuth refresh token invalid_grant
+   veriyor → Opus/thinking (8317/8320, auths paylaşımlı) kullanılmadan
+   önce `claude-login.ps1` + `docker restart cli-proxy-api` şart.
+   GLM (8318) API-key'li, etkilenmez. **Tailscale erişimi (2026-08-14):**
+   üç proxy portu uzak koşu makinesinden (100.73.210.41) host IP
+   100.125.104.107 üzerinden uçtan uca doğrulandı — evolve döngüsü
+   uzakta koşacaksa api_base bu IP'ye çevrilir
+   (docs/uzak-kosu-kurulumu.md Faz 2).
 4. **Subagent'lara uygulama içi tarayıcı YASAK** (Claude Desktop'ta
    çalışırken). 2026-08-03: araştırma ajanı ResearchGate'i Browser pane'de
    açınca GPU süreci çöktü (exit 0x60c201e, deterministik) ve Claude Desktop
