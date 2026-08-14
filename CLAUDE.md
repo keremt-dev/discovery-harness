@@ -772,6 +772,15 @@ edilen risk; Docker'lı koşuma taşınabilir. Raporda not edilir.
       doğrulama + ADAY paketleme + idempotent devam. Duman testi ve
       pytest (283/283) yeşil. Aday çıkarsa iddia protokolü
       (headroom-taramasi §5) elle yürütülür.
+      **Uzak koşu makinesi (2026-08-14, docs/uzak-kosu-kurulumu.md):**
+      DESKTOP-M070IQB (Ryzen 5 5600, 16 GB), Tailscale 100.73.210.41,
+      ssh host `kt-uzak`, repo `F:\kt\discovery-harness`, daima
+      `py -3.14` (PATH'te eski Python var). Kurulum tuzakları (ssh
+      ACL, ssh-keygen -N tırnak tuzağı, boş parola ağ oturumu,
+      ssh→cmd tırnak, schtasks yeniden-tetik) dokümanda. Track A
+      bandı ORADA koşuyor (schtasks `kt-track-a`, 2026-08-14 13:45,
+      beklenen bitiş ~00:15); covering testleri uzakta yeşil, bilinen
+      kırmızılar dokümanda kayıtlı.
 - [ ] **Faz G — P3 (HFFVRP-B).** cvrp-discovery evaluator'ünü KOPYALA,
       heterojen filo (tip başına kapasite + sabit maliyet) ve backhaul
       öncelik kısıtını ekle. ⚠ **Yuvarlama sözleşmesi DOĞRULANACAK**:
