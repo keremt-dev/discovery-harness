@@ -118,7 +118,26 @@ konstrüksiyonu bizde yok; önce onu thinking-dilimiyle yeniden keşfet
 - **C(49,8,2)** (gap 5): t=2 literatür-yoğun bant (Tao gözlemi:
   başarı literatür yoğunluğuyla ters).
 
-## 4. İddia protokolü (değişmedi, guardrail)
+## 4. Track A gece probu bandı (kuruldu 2026-08-14)
+
+`problems/covering/record_band.py` — Track A + SEARCH hücrelerini
+thinking620 genomuyla sıralı tarar (CORE 7 hücre × 3 seed × 1200 sn,
+SEARCH 14 hücre × 2 seed × 450 sn ≈ **10,5 saat**). Her koşu
+`evaluate_text` ile kesin doğrulanır; arşiv-altı değer `ADAY-*.txt`
+olarak paketlenir ve bayraklanır. Arşiv değerleri solver'a sızmaz
+(yalnız koşu sonrası kıyas). Anytime + idempotent: Ctrl-C güvenli,
+aynı komut kaldığı yerden devam eder.
+
+```bash
+python -m problems.covering.record_band --out runs/probes/track-a-20260814
+```
+
+Duman testi 2026-08-14: 3 hücre × 5 sn tesisatı doğruladı (feasible,
+doğru fark, ikinci çağrı koşuları atladı); pytest 283/283 yeşil.
+Bandı **sakin makinede** başlat; sabah `results.csv` + varsa `ADAY-*`
+dosyalarına bakılır.
+
+## 5. İddia protokolü (değişmedi, guardrail)
 
 Bir prob/dilim arşiv altı değer üretirse: (1) sakin makinede bağımsız
 re-run, (2) `evaluate_text` + stdlib `verify_cover.py` çifte doğrulama,

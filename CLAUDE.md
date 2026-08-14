@@ -766,6 +766,12 @@ edilen risk; Docker'lı koşuma taşınabilir. Raporda not edilir.
       ikincil C(32,17,5)=62/lb53; Track C konstrüksiyon: C(v,6,4) —
       önce v=24'te 784'ü yeniden keşfet (+263 açığımız var), sonra
       v=23 (716/625), v=26 (1152/1040), v=29 (1802/1653).
+      **Track A bandı kuruldu (2026-08-14):** `python -m
+      problems.covering.record_band --out runs/probes/track-a-20260814`
+      — 21 hücre, ~10,5 saat, sakin makinede gece koşusu; kesin
+      doğrulama + ADAY paketleme + idempotent devam. Duman testi ve
+      pytest (283/283) yeşil. Aday çıkarsa iddia protokolü
+      (headroom-taramasi §5) elle yürütülür.
 - [ ] **Faz G — P3 (HFFVRP-B).** cvrp-discovery evaluator'ünü KOPYALA,
       heterojen filo (tip başına kapasite + sabit maliyet) ve backhaul
       öncelik kısıtını ekle. ⚠ **Yuvarlama sözleşmesi DOĞRULANACAK**:
