@@ -137,6 +137,23 @@ doğru fark, ikinci çağrı koşuları atladı); pytest 283/283 yeşil.
 Bandı **sakin makinede** başlat; sabah `results.csv` + varsa `ADAY-*`
 dosyalarına bakılır.
 
+**Tur 1 sonucu (uzak makine, 2026-08-14→15, 49/49 koşu):** rekor adayı
+YOK; tüm `fark` ≥ 0. Kazanımlar: SEARCH bandından **8 YENİ eşitleme**
+(B2 setinde olmayan hücreler, hepsi kesin doğrulamalı):
+C(22,10,3)=19, C(24,11,3)=20, C(26,11,3)=26, C(31,11,3)=39,
+C(25,12,3)=17, C(29,12,3)=27, C(22,8,3)=38, C(20,7,3)=45 → band
+koşulları altında eşitleme bilançosu 22→30 hücre (B2 donmuş-protokol
+sayımından AYRI tutulur). Negatif uçlar: C(32,11,3)=61 (+21),
+C(34,12,3)=52 (+13), C(35,12,3)=64 (+24) — orta-v yüksek-k'da arama
+zayıf. **Enstrüman bulgusu:** her koşu ~305 sn sürdü — genom bütçeyi
+içeride `min(budget, 305)` ile tavanlıyormuş (gen200'ün `min(50)`
+vakasının aynısı; "sessiz tavan yok" kuralı yine haklı çıktı). Yani
+CORE'un 1200 sn'lik uzun-bütçe hipotezi tur 1'de TEST EDİLMEDİ.
+Düzeltme: `best_v32_thinking_620_20260811_cap7200.py` (yalnız o satır;
+≤305 sn davranış birebir aynı, duman testiyle doğrulandı). **Tur 2:**
+CORE 7 hücre × 3 seed × 1200 sn (~7 saat) tavansız genomla uzakta
+(`runs/probes/track-a2-uzun`, görev `kt-track-a2`).
+
 ## 5. İddia protokolü (değişmedi, guardrail)
 
 Bir prob/dilim arşiv altı değer üretirse: (1) sakin makinede bağımsız
