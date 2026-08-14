@@ -748,6 +748,24 @@ edilen risk; Docker'lı koşuma taşınabilir. Raporda not edilir.
       C(22,15,5) +7, kıl payı C(27,10,3)/C(30,12,3) +1. Toplam eşitleme
       bilançosu artık 22 hücre (tek protokol altında). Yayın özeti B2
       kapandı.
+      **REKOR-AVI TARAMASI (2026-08-14, docs/headroom-taramasi-20260814.md):**
+      `python data/covering/reference/record_scan.py` → katmanlı headroom
+      taraması (207 aday) + canlı skorbord çaprazı (14 aile sayfası).
+      ⚠ Canlı çapraz Browser pane ile YAPILMAZ: Cloudflare challenge'ın
+      WebGPU fingerprint'i GPU sürecini 0x60C201E ile çökertiyor (2. vaka
+      2026-08-13 20:53, Desktop komple kapandı; 1. vaka ResearchGate
+      2026-08-03) — gerçek Chrome (claude-in-chrome) kullan, challenge
+      kendiliğinden geçiyor. Bulgular: hedef hücrelerin TÜMÜ canlıda
+      donmuş arşivle aynı; tek sapma k=18,t=5 ailesi (canlı 55/105/122/
+      147/182 < donmuş — aile aktif, hedeften düşürüldü; donmuş döküm
+      canlının mükemmel aynası değil, rekor kıyası DAİMA canlıya).
+      Kısa liste — Track A ucuz av: C(20,12,4) 20/lb15, C(30,12,3)
+      30/lb25, C(25,16,4) 17/lb13, C(28,9,3) 56→55 avı, C(23,10,3)
+      24/lb21 (+SEARCH bandı gap-2 ~15 hücre); Track B prestij:
+      C(81,9,3)=1170/lb1080 (saf afini yen; yan ödül C(80,9,3)),
+      ikincil C(32,17,5)=62/lb53; Track C konstrüksiyon: C(v,6,4) —
+      önce v=24'te 784'ü yeniden keşfet (+263 açığımız var), sonra
+      v=23 (716/625), v=26 (1152/1040), v=29 (1802/1653).
 - [ ] **Faz G — P3 (HFFVRP-B).** cvrp-discovery evaluator'ünü KOPYALA,
       heterojen filo (tip başına kapasite + sabit maliyet) ve backhaul
       öncelik kısıtını ekle. ⚠ **Yuvarlama sözleşmesi DOĞRULANACAK**:
