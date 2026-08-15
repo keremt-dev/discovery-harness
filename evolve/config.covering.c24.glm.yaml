@@ -1,0 +1,153 @@
+# OpenEvolve konfigürasyonu — P5 covering TRACK C devam: C(24,6,4), GLM-5.3
+# THINKING-AÇIK (b24-dilim2; 2026-08-15). Temel: config.covering.c24.thinking.yaml
+# (prompt AYNI); LLM katmanı GLM Coding Plan kotasına taşındı:
+# 8318 + alias glm5think (config.glm.yaml — glm-* override'ına takılmayan
+# thinking yolu) + reasoning_effort high (OpenEvolve model-config native).
+# Replika kanıtı (2026-08-15): tam-boy prompt -> finish=stop,
+# reasoning=3342, content 23.9k char, ```python bloğu TAM; süre birkaç dk.
+# Çalıştırma (checkpoint_10''dan +25 iter):
+#   $env:COVERING_SEED_TIME_S = "300"
+#   $env:DISCOVERY_EVAL_SEEDS = "0,1"
+#   $env:DISCOVERY_ARCHIVE_DIR = "evolve\artifacts\b24"
+#   $env:DISCOVERY_ARCHIVE_BELOW = "993"   # yalniz yeni zemin sertifikalansin
+#   .\evolve\run.ps1 -GeceKosusuBitti -Problem covering `
+#     -Instance data\covering\instances\cover-v24-k6-t4.cover `
+#     -InitialProgram evolve\artifacts\best_v32_thinking_620_20260811.py `
+#     -ConfigPath evolve\config.covering.c24.glm.yaml `
+#     -ProxyConfig config.glm.yaml `
+#     -Checkpoint runs\evolve\b24-dilim1\checkpoints\checkpoint_10 `
+#     -SolverTimeoutS 320 -Iterations 25 -OutDir runs\evolve\b24-dilim2
+
+max_iterations: 2000
+checkpoint_interval: 5
+log_level: INFO
+random_seed: 42
+diff_based_evolution: false   # yapisal sicrama tam-dosya yeniden yazimla
+max_code_length: 45000
+
+llm:
+  api_base: "http://localhost:8318/v1"   # GLM container; alias glm5think thinking-acik
+  api_key: "${OPENAI_API_KEY}"           # run.ps1 -ProxyConfig config.yaml dolduruyor
+  models:
+    - name: "glm5think"
+      weight: 1.0
+      # glm-* override'ina takilmayan alias; effort'u OpenEvolve gonderir.
+      reasoning_effort: "high"
+  temperature: 0.8
+  max_tokens: 65536
+  timeout: 900                    # GLM-5.3 replikasi birkac dk; genis tampon
+  retries: 3
+
+prompt:
+  system_message: |
+    You are evolving `solver.py`, a single-file Python solver for the
+    **covering design** problem C(v,k,t): given a universe {1..v}, output
+    a collection of k-element blocks such that EVERY t-element subset of
+    the universe is contained in at least one block. MINIMIZE the number
+    of blocks.
+
+    Contract — breaking any of these gets a heavily penalized score:
+    - CLI: python solver.py <instance.cover> <output.txt>
+    - Input: line-based text; '#' starts a comment. Headers: `v <int>`,
+      `k <int>`, `t <int>` with v > k > t >= 1. Nothing else.
+    - Output: one block per line — EXACTLY k DISTINCT integers in 1..v,
+      separated by whitespace. Order inside a line and order of lines do
+      not matter; a block is a SET. Two lines that contain the same set of
+      numbers are a VIOLATION (duplicate_block). A line with the wrong
+      count, repeats, out-of-range or non-integer tokens is a violation
+      (bad_block) and poisons the whole solution. Lines starting with '#'
+      are ignored; you MAY write `# size <int>` as your own block count —
+      it is IGNORED for scoring (the evaluator recounts exactly) but
+      logged as an honesty sensor.
+    - Feasibility: every one of the C(v,t) t-subsets must be inside at
+      least one of your blocks. The evaluator recomputes coverage with
+      exact integer arithmetic; any uncovered t-subset makes the solution
+      infeasible and scores far below ANY feasible covering, no matter
+      how bloated. Feasibility first, then shrink.
+    - Scoring (feasible): Schoenheim_lower_bound(v,k,t) / block_count,
+      in (0, 1]. Fewer blocks = higher score; 1.0 means you matched the
+      Schoenheim bound (rarely tight for larger cells). The reported
+      score is the MEAN over all instances in the fitness set; one
+      infeasible instance drags the mean hard, so robustness across
+      (v,k,t) matters as much as peak quality on one cell.
+    - Determinism: accept an optional `--seed N` CLI argument (default 0).
+      Same input AND same seed MUST produce the same output. Derive ALL
+      phase budgets from WORK COUNTERS (iteration counts, node counts),
+      NOT from wall-clock fractions — wall-clock may only be used as the
+      final hard stop. Your score is the MEAN over multiple --seed runs,
+      so a solver that is only occasionally lucky scores poorly.
+    - Resources: single process, CPU only; time budget in seconds is given
+      by the COVERING_SEED_TIME_S environment variable (300 s in this run) and
+      the runner hard-kills at 320 s wall clock. Python stdlib and numpy are
+      available. No network; no file access other than the two argv paths.
+    - Code size: files over the harness limit are REJECTED OUTRIGHT —
+      the mutation is wasted without ever being run. Keep solver.py lean:
+      when you add a phase or data structure, PRUNE code that no longer
+      earns its place (dead strategies, superseded helpers, verbose
+      comments). Prefer REPLACING existing code over accumulating new
+      code on top of it.
+
+    ANYTIME IS MANDATORY. Maintain a `.tmp` file and atomically replace
+    the real output (`os.replace`) whenever you have a better solution.
+    Write a COMPLETE covering as early as possible (a greedy one within a
+    few seconds), then keep replacing it with smaller coverings until the
+    budget runs out. If the runner kills you before your first write, the
+    empty output scores at the very bottom. Partial coverage output is
+    graded (less-uncovered is less bad) but still infeasible — reaching
+    full coverage fast is the first milestone on every instance.
+
+    Promising directions:
+    - The current solver's strongest weapon (an affine-geometry flat
+      skeleton) DOES NOT APPLY on this cell (v is not a prime power), so
+      it falls back to greedy construction + tabu/ruin-recreate local
+      search — and pure block-level local search is known to stall far
+      above what structured constructions achieve at this size. The win
+      condition is a STRUCTURAL skeleton, not a better tweak of the
+      search loop.
+    - SYMMETRY is the big lever in covering design construction: cyclic
+      constructions (choose base blocks, close them under x -> x+1 mod v),
+      or other group actions (Z_2 x Z_12, dihedral, products of smaller
+      groups), shrink the search space enormously and produce very
+      regular coverings. Evolve code that SEARCHES for good base blocks
+      under a group action — do NOT hardcode specific block lists or
+      known table values. Mind the orbit arithmetic: one base block
+      yields at most v blocks, so a covering of B blocks needs on the
+      order of B/v base-block orbits — often 25-40 for a cell this size,
+      not 2-3. Search over SETS of many base blocks (e.g. greedily add
+      the orbit covering the most uncovered t-sets, then patch the
+      remainder).
+    - Composition/quotient constructions are classical winners at
+      composite v: build the covering from layered smaller designs
+      (partition or quotient the point set, cover cross-interactions
+      explicitly), lift a covering of a quotient structure, or combine
+      a strong design on v-1 / v-2 points with patch blocks for the
+      removed points ("extend/derive" moves in both directions).
+    - Mixed strategies: symmetric or composed skeleton + greedy patching
+      of the leftover uncovered t-subsets, then redundancy removal and
+      the existing fixed-size tabu endgame on top.
+
+    SCALE: this run targets a SINGLE cell — v=24, k=6, t=4 (C(24,4)=10,626
+    t-subsets; each block covers C(6,4)=15, so the LP floor is ~709
+    blocks and good coverings run to several hundred blocks). The gap
+    between plain search and the best structured constructions is LARGE
+    on this cell — expect the breakthrough to come from a construction
+    family plus patching, and use the 300 s budget aggressively for the
+    search phases that structure opens up.
+  num_top_programs: 3
+  num_diverse_programs: 2
+  include_artifacts: true
+
+database:
+  population_size: 200
+  archive_size: 50
+  num_islands: 4
+  elite_selection_ratio: 0.1
+  exploration_ratio: 0.2
+  exploitation_ratio: 0.7
+
+evaluator:
+  timeout: 1400                # 2 seed x 320 sn + dogrulama + tampon
+  cascade_evaluation: false
+  parallel_evaluations: 4
+  memory_limit_mb: 2048
+  enable_artifacts: true
