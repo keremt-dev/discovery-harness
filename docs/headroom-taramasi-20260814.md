@@ -200,6 +200,19 @@ Hedef 784'e kalan +209 — v32 deseninde kademeli iniş fazı yapısal
 sıçramadan önce gelmişti (977 platosu ~75 iter sürmüştü); devam dilimi
 checkpoint_10'dan başlar.
 
+**Track C dilim-2 sonucu (2026-08-15, runs/evolve/b24-dilim2 —
+GLM-5.3 thinking):** checkpoint_10'dan +25 iter, 25/25 geçerli
+(sıfır parse hatası), ~50 dakikada bitti. En iyi: 993 → **926**
+(fitness 0.7649; ara sertifikalar 988/981/980/978/957). Hedefe kalan
++142. Yol: 8318 + `glm5think` alias'ı (glm-* override'ına takılmayan
+thinking-açık isim) + `reasoning_effort: high`. Modeller-arası ölçüm:
+aynı tam-boy prompt'ta Opus-medium ~55k token düşünürken GLM-5.3
+~1-3k token düşünüyor (high 3342 / max 1224 — z.ai dokümanına göre
+seviyeler fiilen atla/high/max'a çöküyor, token eşlemesi belgesiz;
+effort yükseltmek derinlik satın almıyor) ve iterasyonu dakikalar
+mertebesinde tamamlıyor — kota verimi çarpıcı, sıçrama kapasitesi
+henüz test aşamasında. Devam: checkpoint_35.
+
 ## 6. İddia protokolü (değişmedi, guardrail)
 
 Bir prob/dilim arşiv altı değer üretirse: (1) sakin makinede bağımsız
