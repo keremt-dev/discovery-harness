@@ -31,9 +31,23 @@ llm:
   models:
     - name: "claude-opus-5"
       weight: 1.0
+      # 2026-08-15 olcum zinciri (dilim-1 10/10 "No valid code" otopsisi):
+      #   adaptive @64k  -> completion 64000, content 0 (sarmal)
+      #   adaptive @100k -> completion 100000, content 0 (sarmal buyudu)
+      #   high @64k      -> ayni sarmal (high ~= adaptive bu yolda)
+      #   medium @64k    -> dusunme ~55k durdu, content basladi AMA tavana
+      #                     carpti (finish=length, 31.6k char kesik)
+      #   medium @100k   -> finish=stop, content 25.5k char TAM ✓
+      # Proxy'nin claude yolunda payload.override islemiyor (apply.go
+      # "no config found"); calisan kol ISTEK ICI reasoning_effort —
+      # OpenEvolve model config'inden dogal gonderiyor
+      # (llm/openai.py:65,147). B1'in v32 gorevi adaptive'de ~42k'da
+      # kendiliginden doyuyordu; b81 gorevi ("saf afini gec") adaptive
+      # dusunmeyi SINIRSIZ sarmala sokuyor — bulgu olarak kaydedildi.
+      reasoning_effort: "medium"
   temperature: 0.8
-  max_tokens: 64000
-  timeout: 900
+  max_tokens: 100000              # 2026-08-15: 64k yetmedi — asagidaki nota bak
+  timeout: 1700                   # medium@100k replika ~13-14 dk; 900 kesiyordu
   retries: 3
 
 prompt:
