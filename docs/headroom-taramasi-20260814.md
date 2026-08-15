@@ -213,6 +213,17 @@ effort yükseltmek derinlik satın almıyor) ve iterasyonu dakikalar
 mertebesinde tamamlıyor — kota verimi çarpıcı, sıçrama kapasitesi
 henüz test aşamasında. Devam: checkpoint_35.
 
+**Track C dilim-3 sonucu (2026-08-15, runs/evolve/b24-dilim3 —
+GLM-5.3, +50 iter):** 926 → **924** (yalnız −2; en iyi programın
+2-seed ortalaması hafif iyileşti: 0.7649→0.7677). Ucuz-öğütme fazı
+DOYDU: ilk 25 GLM iterasyonu −67 getirmişti, sonraki 50 iterasyon
+−2. Toplam 85 iterasyonda merdiven: 1054 → 993 → 926 → 924; hedefe
++140. Yol kazası: ~16:05'te tek-kimlik cooldown kaskadı 2 iterasyon
+yaktı (5 Ağustos deseninin kısası; `disable-cooling: true`
+config.glm.yaml'a eklendi). Durum v32'nin 977-platosunun birebir
+karşılığı — sıradaki hamle plato kartı: checkpoint_85'ten
+Opus-medium (derin düşünme) tam-yeniden-yazım dilimi.
+
 ## 6. İddia protokolü (değişmedi, guardrail)
 
 Bir prob/dilim arşiv altı değer üretirse: (1) sakin makinede bağımsız
