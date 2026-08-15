@@ -805,7 +805,24 @@ edilen risk; Docker'lı koşuma taşınabilir. Raporda not edilir.
       — 21 hücre, ~10,5 saat, sakin makinede gece koşusu; kesin
       doğrulama + ADAY paketleme + idempotent devam. Duman testi ve
       pytest (283/283) yeşil. Aday çıkarsa iddia protokolü
-      (headroom-taramasi §5) elle yürütülür.
+      (headroom-taramasi §5-6) elle yürütülür.
+      **TRACK A+B SONUÇLARI (2026-08-15, headroom-taramasi §5):**
+      Tur-1 (uzak, 49/49): aday yok; 8 YENİ eşitleme (SEARCH bandı) →
+      bilanço 30 hücre; genomda gizli `min(budget,305)` tavanı bulundu
+      → cap7200 kopyası. Tur-2 (tavansız × 1200 sn, 21/21): aday yok;
+      C(30,12,3)=30 ve C(28,9,3)=56 uzun bütçeyle eşitlendi. DESEN:
+      arama arşivi yakalıyor, GEÇEMİYOR. Track B / C(81,9,3): dilim-1
+      altyapı arızası (adaptive/high thinking 64k VE 100k'yı tamamen
+      düşünmeye harcıyor, content 0 → tamir: OpenEvolve model-config
+      `reasoning_effort: medium` + max_tokens 100000; proxy
+      payload.override claude yolunda İŞLEMİYOR, apply.go "no config
+      found"); dilim-2 TEMİZ NEGATİF: 10/10 geçerli tam yeniden yazım,
+      hepsi 1170 — saf afin, medium-thinking için çekim noktası.
+      Asimetri bulgusu kayıtlı: sınıra ULAŞMAK (v32 977→620, ilk
+      iterasyon) vs sınırı AŞMAK (b81, 10 iterde gelmedi) + sınırsız
+      düşünme sarmalı. Sıradaki: Track C — C(24,6,4)=784 yeniden
+      keşif dilimi (+263 açık = gradyan var; başarılırsa v=23/26/29
+      gap 91/112/149 av alanı).
       **Uzak koşu makinesi (2026-08-14, docs/uzak-kosu-kurulumu.md):**
       DESKTOP-M070IQB (Ryzen 5 5600, 16 GB), Tailscale 100.73.210.41,
       ssh host `kt-uzak`, repo `F:\kt\discovery-harness`, daima

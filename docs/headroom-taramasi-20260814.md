@@ -154,7 +154,44 @@ Düzeltme: `best_v32_thinking_620_20260811_cap7200.py` (yalnız o satır;
 CORE 7 hücre × 3 seed × 1200 sn (~7 saat) tavansız genomla uzakta
 (`runs/probes/track-a2-uzun`, görev `kt-track-a2`).
 
-## 5. İddia protokolü (değişmedi, guardrail)
+## 5. Sonuçlar: Tur 2 + Track B dilimleri (2026-08-15)
+
+**Tur 2 (tavansız genom × gerçek 1200 sn, uzak makine, 21/21):** rekor
+adayı YOK. Kazanç: iki kıl-payı hücre uzun bütçeyle eşitlemeye döndü —
+**C(30,12,3)=30** (seed2; önceki koşularda 31) ve **C(28,9,3)=56**
+(seed2; B2'de 58-70). Kalan tüm hücreler eşitlemeyi korudu
+(C(22,10,3)=19 dahil). Not: ilk gece koşusu makine uykusuyla öldü
+(uzak-kosu-kurulumu.md tuzak 6); idempotent devam ile tamamlandı.
+**Desen kesinleşti: arama-erimli hücrelerde arşiv YAKALANIYOR ama
+GEÇİLEMİYOR** — Track A kapandı, rekor umudu yapısal keşifte.
+
+**Track B / C(81,9,3) — iki dilim:**
+- *Dilim-1 (altyapı arızası):* 10/10 iterasyon "No valid code" —
+  adaptive/high thinking bu görevde 64k VE 100k tavanların tamamını
+  düşünmeye harcayıp content üretmedi (ölçüm zinciri
+  config.covering.b81.thinking.yaml başlığında). Tamir:
+  `reasoning_effort: medium` + `max_tokens: 100000` (OpenEvolve
+  model-config'i native gönderiyor; proxy payload.override claude
+  yolunda İŞLEMİYOR).
+- *Dilim-2 (temiz negatif):* 10/10 iterasyon GEÇERLİ tam yeniden
+  yazım; hepsi cost=1170 / fitness 0.9231 — **saf afin AG(4,3)
+  iskeleti, medium-thinking Opus için 10 iterasyonda aşılamayan bir
+  çekim noktası.** Arşiv kancasında 1170-altı hiçbir çözüm yok.
+
+**Yayın değeri olan asimetri bulgusu:** v32'de thinking-Opus, bilinen
+sınıra ULAŞMAYI (977→620) ilk iyileşen iterasyonda başarmıştı; b81'de
+bilinen sınırı AŞMA 10 iterasyonda gelmedi ve sınırsız (adaptive)
+düşünme içerik üretimini süresiz erteleyen sarmala girdi. "Reaching
+vs exceeding the frontier" asimetrisi + reasoning-derinliğinin görev
+zorluğuna göre sarmal riski — makale revizyonu / C1 devam işi için
+kayıt.
+
+**Sıradaki öneri (Track C):** C(24,6,4)=784 yeniden keşif dilimi —
+mekanizmaya en uygun hedef: mevcut durumumuz +263 AÇIK (gradyan var),
+görev şekli v32/B1 ile birebir aynı ("bilinen sınıra ulaş"), başarılırsa
+ailenin gap'li komşuları (v=23/26/29, gap 91/112/149) rekor av alanı.
+
+## 6. İddia protokolü (değişmedi, guardrail)
 
 Bir prob/dilim arşiv altı değer üretirse: (1) sakin makinede bağımsız
 re-run, (2) `evaluate_text` + stdlib `verify_cover.py` çifte doğrulama,
