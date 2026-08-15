@@ -51,7 +51,15 @@ Host kt-uzak
    sonrası ikinci kopyayı önlemek için `schtasks /Change /TN <ad>
    /DISABLE` (parola istemez; `/ST` değişikliği "run as" parolası
    İSTER, kullanma). Disable çalışan örneği durdurmaz.
-6. **Taze klonda bilinen kırmızılar:** `test_verify_kofn_standalone`
+6. **Uyku bandı ÖLDÜRÜR (yaşandı, 2026-08-15 01:31):** `powercfg`
+   uyku kapatma adımı atlanırsa makine boşta uykuya dalar ve schtasks
+   ile koşan band süreci ölür (Kernel-Power olay 42; log sessizce
+   kesilir, traceback yok). Tur-2'nin ilk gecesi böyle öldü; band
+   idempotent olduğu için `/ENABLE + /Run + /DISABLE` ile kaldığı
+   yerden devam ettirildi. Kural: koşu başlatmadan ÖNCE uzakta
+   `powercfg -change -standby-timeout-ac 0` çalıştırıldığını doğrula
+   (`powercfg /q SCHEME_CURRENT SUB_SLEEP STANDBYIDLE`).
+7. **Taze klonda bilinen kırmızılar:** `test_verify_kofn_standalone`
    (gitignore'lu `outreach/ozkut-2026-08/verify_kofn.py`'ye bağımlı —
    düzeltme işi ayrıldı) ve `test_evolve_evaluator` 4 fail (adaptör;
    Faz 2'ye bakılacak). **Covering enstrümanının tüm testleri uzakta
