@@ -191,6 +191,15 @@ mekanizmaya en uygun hedef: mevcut durumumuz +263 AÇIK (gradyan var),
 görev şekli v32/B1 ile birebir aynı ("bilinen sınıra ulaş"), başarılırsa
 ailenin gap'li komşuları (v=23/26/29, gap 91/112/149) rekor av alanı.
 
+**Track C dilim-1 sonucu (2026-08-15, runs/evolve/b24-dilim1):**
+gradyan AKIYOR ama yapısal sıçrama henüz yok — 10/10 geçerli iterasyon
+(medium/100k reçetesi ikinci dilimde de sıfır parse hatası), tohum
+1054 → en iyi çocuk **993** (fitness 0.7144; ilk iyileşme daha 2.
+iterasyonda). Arşiv kancasında 13 sertifika (1045→993 kademeli iniş).
+Hedef 784'e kalan +209 — v32 deseninde kademeli iniş fazı yapısal
+sıçramadan önce gelmişti (977 platosu ~75 iter sürmüştü); devam dilimi
+checkpoint_10'dan başlar.
+
 ## 6. İddia protokolü (değişmedi, guardrail)
 
 Bir prob/dilim arşiv altı değer üretirse: (1) sakin makinede bağımsız
