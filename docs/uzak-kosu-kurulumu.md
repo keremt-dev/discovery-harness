@@ -51,11 +51,12 @@ Host kt-uzak
    sonrası ikinci kopyayı önlemek için `schtasks /Change /TN <ad>
    /DISABLE` (parola istemez; `/ST` değişikliği "run as" parolası
    İSTER, kullanma). Disable çalışan örneği durdurmaz.
-6. **Taze klonda bilinen kırmızılar:** `test_verify_kofn_standalone`
-   (gitignore'lu `outreach/ozkut-2026-08/verify_kofn.py`'ye bağımlı —
-   düzeltme işi ayrıldı) ve `test_evolve_evaluator` 4 fail (adaptör;
-   Faz 2'ye bakılacak). **Covering enstrümanının tüm testleri uzakta
-   yeşil** — Track A bandının yolu temiz.
+6. **Taze klonda bilinen kırmızılar:** `test_evolve_evaluator` 4 fail
+   (adaptör; Faz 2'ye bakılacak). `test_verify_kofn_standalone`'ın
+   outreach bağımlılığı GİDERİLDİ (2026-08-14): doğrulayıcı artık
+   depo içinde, `data/kofn/reference/verify_kofn.py` (outreach'taki
+   kopya birebir aynı dosya). **Covering enstrümanının tüm testleri
+   uzakta yeşil** — Track A bandının yolu temiz.
 
 ## İş başlatma (fiilen kullanılan)
 

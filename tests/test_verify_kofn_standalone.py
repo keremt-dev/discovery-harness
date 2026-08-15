@@ -1,9 +1,11 @@
-"""Yazar temas paketindeki bagimsiz dogrulayici (verify_kofn.py) testi.
+"""Bagimsiz kofn dogrulayicisi (data/kofn/reference/verify_kofn.py) testi.
 
 Dogrulayici KENDI KENDINE YETEN tek dosyadir (yalniz stdlib): alicinin
-depo olmadan calistirabilmesi sozlesmenin parcasi. Bu test, onun kesin
-aritmetigini depodaki kanonik objective.system_reliability'ye karsi
-dogrular (ayni Fraction, birebir esitlik) ve CSV denetim modunu sinar.
+depo olmadan calistirabilmesi sozlesmenin parcasi. Kanonik kopya depoda
+durur; yazar temas paketi (gitignore'lu outreach/) ayni dosyanin kopyasini
+tasir. Bu test, onun kesin aritmetigini depodaki kanonik
+objective.system_reliability'ye karsi dogrular (ayni Fraction, birebir
+esitlik) ve CSV denetim modunu sinar.
 """
 
 import importlib.util
@@ -19,7 +21,7 @@ from problems.kofn.io import parse_instance
 from problems.kofn.objective import system_reliability
 
 REPO = Path(__file__).resolve().parent.parent
-VERIFIER = REPO / "outreach" / "ozkut-2026-08" / "verify_kofn.py"
+VERIFIER = REPO / "data" / "kofn" / "reference" / "verify_kofn.py"
 
 
 @pytest.fixture(scope="module")
